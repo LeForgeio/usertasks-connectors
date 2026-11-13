@@ -52,19 +52,23 @@ export const TOKEN_SECRET = 'api_token'
 const OMIT = Symbol('omit')
 const PLACEHOLDER = /\{\{(\w+)\}\}/g
 
+type Fail = (message: string) => never
+
+/** An input with no value: undefined, null, or a string of only spaces. */
 function isEmpty(value: unknown): boolean {
-  return value === undefined || value === null || value === ''
+  return value === undefined || value === null || (typeof value === 'string' && value.trim() === '')
 }
 
-/** Give a JSON value. A string that holds JSON text is parsed. */
-function asJson(value: unknown): unknown {
+/**
+ * Give the JSON value of an input. A string must hold JSON text (a number,
+ * true/false, a list or an object); other text fails the step.
+ */
+function asJson(name: string, value: unknown, fail: Fail): unknown {
   if (typeof value !== 'string') return value
-  const text = value.trim()
-  if (text === '') return OMIT
   try {
-    return JSON.parse(text)
+    return JSON.parse(value)
   } catch {
-    return value
+    return fail(`${name} is not valid JSON`)
   }
 }
 
@@ -77,8 +81,8 @@ function interpolate(text: string, inputs: Record<string, unknown>): string {
  * Fill a parsed body template. A key whose input is empty is removed, so
  * the server uses its own default and does not get an empty string.
  */
-function fill(node: unknown, inputs: Record<string, unknown>): unknown {
-  if (Array.isArray(node)) return node.map((n) => fill(n, inputs)).filter((n) => n !== OMIT)
+function fill(node: unknown, inputs: Record<string, unknown>, fail: Fail): unknown {
+  if (Array.isArray(node)) return node.map((n) => fill(n, inputs, fail)).filter((n) => n !== OMIT)
   if (node && typeof node === 'object') {
     const marker = node as { __q?: string; __raw?: string }
     if (typeof marker.__q === 'string') {
@@ -87,11 +91,11 @@ function fill(node: unknown, inputs: Record<string, unknown>): unknown {
     }
     if (typeof marker.__raw === 'string') {
       const value = inputs[marker.__raw]
-      return isEmpty(value) ? OMIT : asJson(value)
+      return isEmpty(value) ? OMIT : asJson(marker.__raw, value, fail)
     }
     const out: Record<string, unknown> = {}
     for (const [key, child] of Object.entries(node)) {
-      const value = fill(child, inputs)
+      const value = fill(child, inputs, fail)
       if (value !== OMIT) out[key] = value
     }
     return out
@@ -140,21 +144,22 @@ export function markTemplate(template: string): string {
  */
 export function buildBody(template: string | null | undefined, inputs: Record<string, unknown>, contentType: string, ctx: Pick<ActionContext, 'fail'>): string | undefined {
   if (!template) return undefined
+  const fail: Fail = (message) => ctx.fail(message)
   const whole = /^\s*\{\{(\w+)\}\}\s*$/.exec(template)
-  if (!whole) return JSON.stringify(fill(JSON.parse(markTemplate(template)), inputs))
+  if (!whole) {
+    let tree: unknown
+    try {
+      tree = JSON.parse(markTemplate(template))
+    } catch (error) {
+      return fail(`The body template is not valid JSON: ${(error as Error).message}`)
+    }
+    return JSON.stringify(fill(tree, inputs, fail))
+  }
   const name = whole[1]
   const value = inputs[name]
   if (isEmpty(value)) return undefined
   if (contentType.startsWith('text/')) return typeof value === 'string' ? value : JSON.stringify(value)
-  if (typeof value === 'string') {
-    try {
-      JSON.parse(value)
-    } catch {
-      ctx.fail(`${name} is not valid JSON`)
-    }
-    return value.trim()
-  }
-  return JSON.stringify(value)
+  return JSON.stringify(asJson(name, value, fail))
 }
 
 /** Make the full URL: the path values are encoded, empty query values are left out. */
@@ -173,10 +178,11 @@ export function buildUrl(base: string, op: SpecOperation, inputs: Record<string,
   return `${base.replace(/\/+$/, '')}${path}${parts.length ? `?${parts.join('&')}` : ''}`
 }
 
-/** The outputs that every operation returns. Spec outputs cannot use these names. */
-export const STANDARD_OUTPUTS = ['http_status', 'http_ok', 'response'] as const
-
-/** Read the declared outputs from the response, plus the standard outputs. */
+/**
+ * Read the declared outputs from the response, plus the standard outputs
+ * http_status, http_ok and response. scripts/gen.mjs declares the same three
+ * names in each manifest, and the harness fails when one is not returned.
+ */
 export function readOutputs(op: SpecOperation, status: number, ok: boolean, data: unknown): Record<string, unknown> {
   const outputs: Record<string, unknown> = {}
   const arrays = op.outputs.filter((o) => o.type === 'array')
@@ -189,13 +195,23 @@ export function readOutputs(op: SpecOperation, status: number, ok: boolean, data
   return { ...outputs, http_status: status, http_ok: ok, response: data }
 }
 
-/** True when the token secret has a value. Only an optional-token action asks. */
+/** The host error for a secret with no value (UserTasks: "has not been set"; the test kit: "has no mock value"). */
+const NOT_SET = /has not been set|has no mock value/i
+
+/**
+ * True when the token secret has a value. Only an optional-token action asks.
+ * Only a "not set" error means no token. Any other error stops the step, so
+ * the call never goes out with no login by accident.
+ */
 async function tokenIsSet(ctx: ActionContext): Promise<boolean> {
+  let value: unknown
   try {
-    return (await ctx.secrets.get(`secret://${TOKEN_SECRET}`)) !== ''
-  } catch {
-    return false
+    value = await ctx.secrets.get(`secret://${TOKEN_SECRET}`)
+  } catch (error) {
+    if (NOT_SET.test(String((error as Error)?.message ?? error))) return false
+    throw error
   }
+  return !isEmpty(value)
 }
 
 async function call(spec: Spec, op: SpecOperation, inputs: Record<string, unknown>, ctx: ActionContext) {
@@ -206,7 +222,7 @@ async function call(spec: Spec, op: SpecOperation, inputs: Record<string, unknow
   if (body !== undefined && !contentType) headers['Content-Type'] = 'application/json'
   // A server that needs no token (for example a public ntfy server) gets no
   // Authorization header when the token is empty. Otherwise the host puts the
-  // secret into the header, and a missing secret fails the step.
+  // secret into the header. If the secret has no value, the step fails.
   const login = !spec.auth.optional || (await tokenIsSet(ctx))
   if (login) headers.Authorization = `Bearer secret://${TOKEN_SECRET}`
   const init: ActionHttpInit = { method: op.method, headers, body }

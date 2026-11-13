@@ -137,6 +137,17 @@
         }
       },
       "expect_error": "action"
+    },
+    {
+      "name": "create issue: label ids that are not JSON fail before the call",
+      "operation": "create_issue",
+      "inputs": {
+        "owner": "o",
+        "repo": "r",
+        "title": "t",
+        "label_ids": "1,2"
+      },
+      "expect_error": "action"
     }
   ]
 }

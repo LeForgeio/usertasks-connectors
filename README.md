@@ -35,8 +35,10 @@ This runs the tests and writes `release/gitea-1.0.0.zip`. Then, in UserTasks:
 3. In the workflow designer, open **Custom actions** in the palette and drop
    the action on the canvas. Pick an operation and map its inputs.
 
-The token goes in the request header as `Bearer secret://api_token`. The
-UserTasks host puts the value in, so the token never enters the sandbox.
+The token goes in the request header as `Bearer secret://api_token`, and the
+UserTasks host puts the value in. One exception: the token is optional for
+`ntfy`, so before each call that action reads the secret to see if it has a
+value. That is the only place where a token enters the sandbox.
 
 Every operation returns `http_status`, `http_ok` and `response` (the full body), plus
 its own outputs. A status that is not 2xx fails the step. A 429 or 5xx can
@@ -58,7 +60,7 @@ on the UserTasks server.
 
 ## Layout
 
-```
+```text
 actions/<name>/spec.json        the REST calls: the only file you edit
 actions/<name>/test/cases.json  request and response checks
 actions/<name>/manifest.json    generated (npm run gen)

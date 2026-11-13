@@ -106,6 +106,18 @@
         "data": "entity_id: light.x"
       },
       "expect_error": "action"
+    },
+    {
+      "name": "call service: data of only spaces sends no body",
+      "operation": "call_service",
+      "inputs": {
+        "domain": "light",
+        "service": "turn_on",
+        "data": "   "
+      },
+      "expect_request": {
+        "body": null
+      }
     }
   ]
 }

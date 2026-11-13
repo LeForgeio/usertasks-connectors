@@ -26,3 +26,11 @@ test('a text body sends an object as JSON text', () => {
 test('a JSON body input that is not JSON fails', () => {
   assert.throws(() => buildBody('{{d}}', { d: 'a: b' }, 'application/json', ctx), /d is not valid JSON/)
 })
+
+test('a broken body template fails with a clear message', () => {
+  assert.throws(() => buildBody('{"{{k}}": 1}', { k: 'x' }, 'application/json', ctx), /The body template is not valid JSON/)
+})
+
+test('a bare placeholder with text that is not JSON fails', () => {
+  assert.throws(() => buildBody('{"labels": {{l}}}', { l: '1,2' }, 'application/json', ctx), /l is not valid JSON/)
+})
