@@ -186,8 +186,11 @@ export function buildUrl(base: string, op: SpecOperation, inputs: Record<string,
 export function readOutputs(op: SpecOperation, status: number, ok: boolean, data: unknown): Record<string, unknown> {
   const outputs: Record<string, unknown> = {}
   const arrays = op.outputs.filter((o) => o.type === 'array')
+  const strings = op.outputs.filter((o) => o.type === 'string' || o.type === 'text')
   for (const field of op.outputs) {
     if (Array.isArray(data)) outputs[field.name] = field.type === 'array' && arrays.length === 1 ? data : null
+    // A plain-text reply (for example a Home Assistant template) fills the one text output.
+    else if (typeof data === 'string') outputs[field.name] = strings.length === 1 && strings[0] === field ? data : null
     else if (data && typeof data === 'object') outputs[field.name] = (data as Record<string, unknown>)[field.name] ?? null
     else outputs[field.name] = null
   }
@@ -215,6 +218,8 @@ async function tokenIsSet(ctx: ActionContext): Promise<boolean> {
 }
 
 async function call(spec: Spec, op: SpecOperation, inputs: Record<string, unknown>, ctx: ActionContext) {
+  // The host fails a required input with no value, but not one of only spaces.
+  for (const field of op.inputs) if (field.required && isEmpty(inputs[field.name])) ctx.fail(`${field.name} is required`)
   const url = buildUrl(__BASE_URL__, op, inputs, ctx)
   const headers: Record<string, string> = { Accept: 'application/json', ...(op.headers ?? {}) }
   const contentType = Object.entries(headers).find(([k]) => k.toLowerCase() === 'content-type')?.[1] ?? ''

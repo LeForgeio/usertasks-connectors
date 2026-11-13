@@ -79,6 +79,39 @@
           "count": 1
         }
       }
+    },
+    {
+      "name": "create user: a username of only spaces fails before the call",
+      "operation": "create_user",
+      "inputs": {
+        "username": "  ",
+        "name": "A",
+        "email": "a@example.com",
+        "is_active": true
+      },
+      "expect_error": "action"
+    },
+    {
+      "name": "current user: the server wraps the user in a user field",
+      "operation": "get_current_user",
+      "inputs": {},
+      "mocks": {
+        "http": {
+          "status": 200,
+          "json": {
+            "user": {
+              "pk": 1,
+              "username": "akadmin"
+            }
+          }
+        }
+      },
+      "expect": {
+        "user": {
+          "pk": 1,
+          "username": "akadmin"
+        }
+      }
     }
   ]
 }
