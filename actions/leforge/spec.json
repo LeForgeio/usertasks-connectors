@@ -20,13 +20,9 @@
     "note": "A key gets its rights from the user who made it. Use a key from a user with the lowest role that works."
   },
   "auth": {
-    "style": "bearer",
-    "config": {
-      "token": "<token>"
-    },
     "optional": false,
     "label": "API Key",
-    "hint": "A LeForge API key. It starts with fhk_. Create it in LeForge under Settings, API keys"
+    "hint": "A LeForge API key. It starts with fhk_. Create it in LeForge under Settings, API keys."
   },
   "operations": [
     {

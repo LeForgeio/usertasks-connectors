@@ -8,7 +8,7 @@
   "color": "#FD4B2D",
   "category": "productivity",
   "summary": "Authentik REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
-  "setup_notes": "Packaged for one Authentik server (npm run package -- authentik --url <server URL>). Set the secret \"api_token\" on the Access tab: Sent as a bearer token Create it in the admin interface: Directory > Tokens and App passwords A service account user for this connector An API token for that user (Directory > Tokens and App passwords, intent \"API Token\") A role that can view and change users and groups, and nothing more",
+  "setup_notes": "Packaged for one Authentik server (npm run package -- authentik --url <server URL>). Set the secret \"api_token\" on the Access tab: Sent as a bearer token. Create it in the admin interface: Directory > Tokens and App passwords. A service account user for this connector An API token for that user (Directory > Tokens and App passwords, intent \"API Token\") A role that can view and change users and groups, and nothing more",
   "homepage": "https://github.com/LeForgeio/usertasks-connectors",
   "author": "LeForge",
   "license": "Apache-2.0",
@@ -29,14 +29,14 @@
           "type": "json"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -82,14 +82,14 @@
           "type": "json"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -148,14 +148,14 @@
           "type": "array"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -225,14 +225,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -268,14 +268,14 @@
       ],
       "outputs": [
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -311,14 +311,14 @@
       ],
       "outputs": [
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -363,14 +363,14 @@
           "type": "json"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -416,14 +416,14 @@
           "type": "json"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -447,7 +447,7 @@
       {
         "name": "api_token",
         "label": "API Token",
-        "description": "Sent as a bearer token Create it in the admin interface: Directory > Tokens and App passwords"
+        "description": "Sent as a bearer token. Create it in the admin interface: Directory > Tokens and App passwords."
       }
     ]
   },

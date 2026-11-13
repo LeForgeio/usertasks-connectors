@@ -13,7 +13,7 @@ npm run package -- home_assistant --url https://ha.example.com
 Upload `release/home_assistant-1.0.0.zip` in UserTasks: **Extensibility > Workflow actions > Upload**. Then open **Manage > Access** on the action:
 
 1. Approve the host.
-2. Set the secret `api_token`. Profile page > Security > Long-lived access tokens > Create token
+2. Set the secret `api_token`. A long-lived access token. Create it on your Profile page > Security > Long-lived access tokens > Create token.
 
 Recommended setup:
 
@@ -24,7 +24,7 @@ A long-lived access token has the full rights of its user. Create it in your pro
 
 ## Operations
 
-Every operation also returns `status`, `ok` and `response` (the full body). A status that is not 2xx fails the step (429 and 5xx can be retried).
+Every operation also returns `http_status`, `http_ok` and `response` (the full body). A status that is not 2xx fails the step (429 and 5xx can be retried).
 
 | Id | Name | Call | Inputs (? = optional) |
 |---|---|---|---|

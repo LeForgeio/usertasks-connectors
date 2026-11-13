@@ -149,6 +149,9 @@ for (const operation of manifest.operations) {
       const typeError = typeProblem(field, result.outputs[field.name])
       if (typeError) problems.push(typeError)
     }
+    // The mock server answers 200 {}, so the standard outputs must be exactly these.
+    if (result.outputs.http_status !== 200) problems.push(`http_status: expected 200, got ${JSON.stringify(result.outputs.http_status)}`)
+    if (result.outputs.http_ok !== true) problems.push(`http_ok: expected true, got ${JSON.stringify(result.outputs.http_ok)}`)
     const auth = (seen[0]?.init.headers as Record<string, string> | undefined)?.Authorization
     if (auth !== 'Bearer test-token') problems.push(`Authorization header: expected the api_token secret, got ${JSON.stringify(auth)}`)
   }

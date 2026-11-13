@@ -19,13 +19,9 @@
     "note": "The API schema of your server is at <server URL>/api/v3/schema/."
   },
   "auth": {
-    "style": "bearer",
-    "config": {
-      "token": "<token>"
-    },
     "optional": false,
     "label": "API Token",
-    "hint": "Sent as a bearer token Create it in the admin interface: Directory > Tokens and App passwords"
+    "hint": "Sent as a bearer token. Create it in the admin interface: Directory > Tokens and App passwords."
   },
   "operations": [
     {

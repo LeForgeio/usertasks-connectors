@@ -18,13 +18,9 @@
     "note": "A long-lived access token has the full rights of its user. Create it in your profile page, under Security."
   },
   "auth": {
-    "style": "bearer",
-    "config": {
-      "token": "<token>"
-    },
     "optional": false,
     "label": "Long-Lived Access Token",
-    "hint": "Profile page > Security > Long-lived access tokens > Create token"
+    "hint": "A long-lived access token. Create it on your Profile page > Security > Long-lived access tokens > Create token."
   },
   "operations": [
     {

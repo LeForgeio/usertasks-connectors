@@ -8,7 +8,7 @@
   "color": "#338574",
   "category": "communication",
   "summary": "ntfy REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
-  "setup_notes": "Packaged for one ntfy server (npm run package -- ntfy --url <server URL>). Set the secret \"api_token\" on the Access tab (optional for this server type): Optional. Leave empty for a server that allows anonymous publish. Create it on the server with: ntfy token add <user> A topic for each alert stream An access token with write access to those topics (ntfy token add)",
+  "setup_notes": "Packaged for one ntfy server (npm run package -- ntfy --url <server URL>). Set the secret \"api_token\" on the Access tab (optional for this server type): Optional. Leave empty for a server that allows anonymous publish. Create it on the server with: ntfy token add <user>. A topic for each alert stream An access token with write access to those topics (ntfy token add)",
   "homepage": "https://github.com/LeForgeio/usertasks-connectors",
   "author": "LeForge",
   "license": "Apache-2.0",
@@ -97,14 +97,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -128,14 +128,14 @@
           "type": "boolean"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -159,7 +159,7 @@
       {
         "name": "api_token",
         "label": "Access Token",
-        "description": "Optional. Leave empty for a server that allows anonymous publish. Create it on the server with: ntfy token add <user>"
+        "description": "Optional. Leave empty for a server that allows anonymous publish. Create it on the server with: ntfy token add <user>."
       }
     ]
   },

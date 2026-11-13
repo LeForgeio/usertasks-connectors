@@ -3,23 +3,66 @@
     {
       "name": "create env: true/false stays a boolean",
       "operation": "create_env",
-      "inputs": { "uuid": "abc123", "key": "PORT", "value": "3000", "is_preview": false },
-      "mocks": { "http": { "status": 201, "json": { "uuid": "env1" } } },
-      "expect_request": { "method": "POST", "url": "https://api.example.test/api/v1/applications/abc123/envs", "body": { "key": "PORT", "value": "3000", "is_preview": false } },
-      "expect": { "uuid": "env1" }
+      "inputs": {
+        "uuid": "abc123",
+        "key": "PORT",
+        "value": "3000",
+        "is_preview": false
+      },
+      "mocks": {
+        "http": {
+          "status": 201,
+          "json": {
+            "uuid": "env1"
+          }
+        }
+      },
+      "expect_request": {
+        "method": "POST",
+        "url": "https://api.example.test/api/v1/applications/abc123/envs",
+        "body": {
+          "key": "PORT",
+          "value": "3000",
+          "is_preview": false
+        }
+      },
+      "expect": {
+        "uuid": "env1"
+      }
     },
     {
       "name": "deploy: uuid and force in the query",
       "operation": "deploy",
-      "inputs": { "uuid": "abc123", "force": true },
-      "expect_request": { "method": "POST", "url": "https://api.example.test/api/v1/deploy?uuid=abc123&force=true" }
+      "inputs": {
+        "uuid": "abc123",
+        "force": true
+      },
+      "expect_request": {
+        "method": "POST",
+        "url": "https://api.example.test/api/v1/deploy?uuid=abc123&force=true"
+      }
     },
     {
       "name": "list applications: the list comes back",
       "operation": "list_applications",
       "inputs": {},
-      "mocks": { "http": { "status": 200, "json": [{ "uuid": "a" }] } },
-      "expect": { "applications": [{ "uuid": "a" }] }
+      "mocks": {
+        "http": {
+          "status": 200,
+          "json": [
+            {
+              "uuid": "a"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "applications": [
+          {
+            "uuid": "a"
+          }
+        ]
+      }
     }
   ]
 }

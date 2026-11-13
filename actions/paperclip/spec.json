@@ -18,13 +18,9 @@
     "note": "Do not use a board admin key. The key can act in the company it belongs to."
   },
   "auth": {
-    "style": "bearer",
-    "config": {
-      "token": "<token>"
-    },
     "optional": false,
     "label": "API Key",
-    "hint": "An agent API key (bearer token) Create an agent key in Paperclip. Do not use a board admin key."
+    "hint": "An agent API key (bearer token). Create an agent key in Paperclip. Do not use a board admin key."
   },
   "operations": [
     {

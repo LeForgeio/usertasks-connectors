@@ -3,41 +3,101 @@
     {
       "name": "send: text body, options as query, token in header",
       "operation": "send_message",
-      "inputs": { "topic": "alerts", "message": "Disk is 91% full ✅", "title": "Homelab", "priority": "4", "tags": "warning" },
-      "mocks": { "http": { "status": 200, "json": { "id": "abc", "time": 1700000000, "topic": "alerts", "message": "Disk is 91% full ✅" } } },
+      "inputs": {
+        "topic": "alerts",
+        "message": "Disk is 91% full ✅",
+        "title": "Homelab",
+        "priority": "4",
+        "tags": "warning"
+      },
+      "mocks": {
+        "http": {
+          "status": 200,
+          "json": {
+            "id": "abc",
+            "time": 1700000000,
+            "topic": "alerts",
+            "message": "Disk is 91% full ✅"
+          }
+        }
+      },
       "expect_request": {
         "method": "POST",
         "url": "https://api.example.test/alerts?title=Homelab&priority=4&tags=warning",
-        "headers": { "Authorization": "Bearer test-token", "Content-Type": "text/plain; charset=utf-8" },
+        "headers": {
+          "Authorization": "Bearer test-token",
+          "Content-Type": "text/plain; charset=utf-8"
+        },
         "body": "Disk is 91% full ✅"
       },
-      "expect": { "id": "abc", "topic": "alerts", "status": 200, "ok": true }
+      "expect": {
+        "id": "abc",
+        "topic": "alerts",
+        "http_status": 200,
+        "http_ok": true
+      }
     },
     {
       "name": "send with no token set: calls again with no login",
       "operation": "send_message",
-      "inputs": { "topic": "public-topic", "message": "hello" },
-      "mocks": { "secrets": {}, "http": { "status": 200, "json": { "id": "x1" } } },
-      "expect_request": { "url": "https://api.example.test/public-topic", "headers": { "Authorization": null }, "body": "hello" },
-      "expect": { "id": "x1" }
+      "inputs": {
+        "topic": "public-topic",
+        "message": "hello"
+      },
+      "mocks": {
+        "secrets": {},
+        "http": {
+          "status": 200,
+          "json": {
+            "id": "x1"
+          }
+        }
+      },
+      "expect_request": {
+        "url": "https://api.example.test/public-topic",
+        "headers": {
+          "Authorization": null
+        },
+        "body": "hello"
+      },
+      "expect": {
+        "id": "x1"
+      }
     },
     {
       "name": "a topic with a slash is encoded",
       "operation": "send_message",
-      "inputs": { "topic": "a/b", "message": "m" },
-      "expect_request": { "url": "https://api.example.test/a%2Fb" }
+      "inputs": {
+        "topic": "a/b",
+        "message": "m"
+      },
+      "expect_request": {
+        "url": "https://api.example.test/a%2Fb"
+      }
     },
     {
       "name": "403 from the server fails the step",
       "operation": "send_message",
-      "inputs": { "topic": "locked", "message": "m" },
-      "mocks": { "http": { "status": 403, "json": { "error": "forbidden" } } },
+      "inputs": {
+        "topic": "locked",
+        "message": "m"
+      },
+      "mocks": {
+        "http": {
+          "status": 403,
+          "json": {
+            "error": "forbidden"
+          }
+        }
+      },
       "expect_error": "action"
     },
     {
       "name": "missing topic fails before any call",
       "operation": "send_message",
-      "inputs": { "message": "m" },
+      "inputs": {
+        "message": "m"
+      },
       "expect_error": true
     }
   ]

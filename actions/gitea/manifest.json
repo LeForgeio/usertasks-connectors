@@ -8,7 +8,7 @@
   "color": "#609926",
   "category": "productivity",
   "summary": "Gitea REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
-  "setup_notes": "Packaged for one Gitea server (npm run package -- gitea --url <server URL>). Set the secret \"api_token\" on the Access tab: A personal access token for the user that makes the calls Gitea > Settings > Applications > Generate New Token A personal access token from a dedicated bot user Scopes: read:user, read:repository, write:repository, write:issue (add read:organization for organization repositories) Add the bot user as a collaborator only on the repositories it must change",
+  "setup_notes": "Packaged for one Gitea server (npm run package -- gitea --url <server URL>). Set the secret \"api_token\" on the Access tab: A personal access token for the user that makes the calls. Create it in Gitea > Settings > Applications > Generate New Token. A personal access token from a dedicated bot user Scopes: read:user, read:repository, write:repository, write:issue (add read:organization for organization repositories) Add the bot user as a collaborator only on the repositories it must change",
   "homepage": "https://github.com/LeForgeio/usertasks-connectors",
   "author": "LeForge",
   "license": "Apache-2.0",
@@ -66,14 +66,14 @@
           "type": "boolean"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -149,14 +149,14 @@
           "type": "array"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -235,14 +235,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -304,14 +304,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -365,14 +365,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -437,14 +437,14 @@
           "type": "array"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -522,14 +522,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -617,14 +617,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -705,19 +705,24 @@
           "type": "number"
         },
         {
+          "name": "status",
+          "label": "Status",
+          "type": "string"
+        },
+        {
           "name": "context",
           "label": "Context",
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -779,14 +784,14 @@
           "type": "number"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -813,7 +818,7 @@
       {
         "name": "api_token",
         "label": "Access Token",
-        "description": "A personal access token for the user that makes the calls Gitea > Settings > Applications > Generate New Token"
+        "description": "A personal access token for the user that makes the calls. Create it in Gitea > Settings > Applications > Generate New Token."
       }
     ]
   },

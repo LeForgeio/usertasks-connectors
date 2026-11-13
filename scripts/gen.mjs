@@ -5,21 +5,21 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { TOKEN_SECRET, hostOf as checkedHostOf } from './common.mjs'
 
+/** The host in the committed manifest when an action has no default server. The build replaces it. */
 const PLACEHOLDER_HOST = 'your-server.invalid'
-const TOKEN_SECRET = 'api_token'
+/** lib/rest.ts returns these for every operation (STANDARD_OUTPUTS there). */
 const STANDARD_OUTPUTS = [
-  { name: 'status', label: 'HTTP status', type: 'integer', description: 'The HTTP status code of the response' },
-  { name: 'ok', label: 'OK', type: 'boolean', description: 'True when the status is 2xx' },
+  { name: 'http_status', label: 'HTTP status', type: 'integer', description: 'The HTTP status code of the response' },
+  { name: 'http_ok', label: 'HTTP OK', type: 'boolean', description: 'True when the status is 2xx' },
   { name: 'response', label: 'Response', type: 'json', description: 'The full response body' },
 ]
 
 const label = (name) => name.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase())
 
 function hostOf(url) {
-  if (!url) return PLACEHOLDER_HOST
-  const u = new URL(url)
-  return u.port ? `${u.hostname}:${u.port}` : u.hostname
+  return url ? checkedHostOf(url) : PLACEHOLDER_HOST
 }
 
 function defaultFor(field) {
@@ -70,7 +70,9 @@ function manifestOf(spec) {
         ...defaultFor(f),
         example: exampleFor(f),
       }))
-      const own = op.outputs.filter((o) => !STANDARD_OUTPUTS.some((s) => s.name === o.name))
+      const clash = op.outputs.find((o) => STANDARD_OUTPUTS.some((s) => s.name === o.name))
+      if (clash) throw new Error(`${spec.key}.${op.id}: the output name "${clash.name}" is kept for the standard outputs`)
+      const own = op.outputs
       return {
         id: op.id,
         label: op.label,
@@ -110,7 +112,7 @@ Upload \`release/${spec.key}-${spec.version}.zip\` in UserTasks: **Extensibility
 ${spec.setup?.items?.length ? `\nRecommended setup:\n\n${spec.setup.items.map((i) => `- ${i}`).join('\n')}\n${spec.setup.note ? `\n${spec.setup.note}\n` : ''}` : ''}
 ## Operations
 
-Every operation also returns \`status\`, \`ok\` and \`response\` (the full body). A status that is not 2xx fails the step (429 and 5xx can be retried).
+Every operation also returns \`http_status\`, \`http_ok\` and \`response\` (the full body). A status that is not 2xx fails the step (429 and 5xx can be retried).
 
 | Id | Name | Call | Inputs (? = optional) |
 |---|---|---|---|

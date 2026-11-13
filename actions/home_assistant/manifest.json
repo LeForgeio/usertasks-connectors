@@ -8,7 +8,7 @@
   "color": "#18bcf2",
   "category": "productivity",
   "summary": "Home Assistant REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
-  "setup_notes": "Packaged for one Home Assistant server (npm run package -- home_assistant --url <server URL>). Set the secret \"api_token\" on the Access tab: Profile page > Security > Long-lived access tokens > Create token A long-lived access token from a dedicated user A user that can control only the entities the workflows need",
+  "setup_notes": "Packaged for one Home Assistant server (npm run package -- home_assistant --url <server URL>). Set the secret \"api_token\" on the Access tab: A long-lived access token. Create it on your Profile page > Security > Long-lived access tokens > Create token. A long-lived access token from a dedicated user A user that can control only the entities the workflows need",
   "homepage": "https://github.com/LeForgeio/usertasks-connectors",
   "author": "LeForge",
   "license": "Apache-2.0",
@@ -29,14 +29,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -90,14 +90,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -124,14 +124,14 @@
           "type": "array"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -181,14 +181,14 @@
           "type": "array"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -229,14 +229,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -269,14 +269,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -299,7 +299,7 @@
       {
         "name": "api_token",
         "label": "Long-Lived Access Token",
-        "description": "Profile page > Security > Long-lived access tokens > Create token"
+        "description": "A long-lived access token. Create it on your Profile page > Security > Long-lived access tokens > Create token."
       }
     ]
   },

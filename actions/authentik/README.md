@@ -13,7 +13,7 @@ npm run package -- authentik --url https://authentik.example.com
 Upload `release/authentik-1.0.0.zip` in UserTasks: **Extensibility > Workflow actions > Upload**. Then open **Manage > Access** on the action:
 
 1. Approve the host.
-2. Set the secret `api_token`. Sent as a bearer token Create it in the admin interface: Directory > Tokens and App passwords
+2. Set the secret `api_token`. Sent as a bearer token. Create it in the admin interface: Directory > Tokens and App passwords.
 
 Recommended setup:
 
@@ -25,7 +25,7 @@ The API schema of your server is at <server URL>/api/v3/schema/.
 
 ## Operations
 
-Every operation also returns `status`, `ok` and `response` (the full body). A status that is not 2xx fails the step (429 and 5xx can be retried).
+Every operation also returns `http_status`, `http_ok` and `response` (the full body). A status that is not 2xx fails the step (429 and 5xx can be retried).
 
 | Id | Name | Call | Inputs (? = optional) |
 |---|---|---|---|

@@ -19,13 +19,9 @@
     "note": "A token with the read permission cannot see sensitive values such as environment variable values."
   },
   "auth": {
-    "style": "bearer",
-    "config": {
-      "token": "<token>"
-    },
     "optional": false,
     "label": "API Token",
-    "hint": "A Coolify API token Create it in Coolify under Keys & Tokens, API tokens"
+    "hint": "A Coolify API token. Create it in Coolify under Keys & Tokens, API tokens."
   },
   "operations": [
     {

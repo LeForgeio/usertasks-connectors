@@ -18,13 +18,9 @@
     "note": "A public server such as ntfy.sh needs no token, but anyone who knows the topic name can read it."
   },
   "auth": {
-    "style": "bearer",
-    "config": {
-      "token": "<token>"
-    },
     "optional": true,
     "label": "Access Token",
-    "hint": "Optional. Leave empty for a server that allows anonymous publish. Create it on the server with: ntfy token add <user>"
+    "hint": "Optional. Leave empty for a server that allows anonymous publish. Create it on the server with: ntfy token add <user>."
   },
   "operations": [
     {

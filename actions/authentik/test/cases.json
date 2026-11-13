@@ -3,24 +3,82 @@
     {
       "name": "add user to group: the user pk is a number",
       "operation": "add_user_to_group",
-      "inputs": { "group_uuid": "g-1", "user_pk": 12 },
-      "mocks": { "http": { "status": 204, "text": "" } },
-      "expect_request": { "method": "POST", "url": "https://api.example.test/api/v3/core/groups/g-1/add_user/", "body": { "pk": 12 } },
-      "expect": { "status": 204, "ok": true, "response": null }
+      "inputs": {
+        "group_uuid": "g-1",
+        "user_pk": 12
+      },
+      "mocks": {
+        "http": {
+          "status": 204,
+          "text": ""
+        }
+      },
+      "expect_request": {
+        "method": "POST",
+        "url": "https://api.example.test/api/v3/core/groups/g-1/add_user/",
+        "body": {
+          "pk": 12
+        }
+      },
+      "expect": {
+        "response": null,
+        "http_status": 204,
+        "http_ok": true
+      }
     },
     {
       "name": "create user: is_active is a boolean",
       "operation": "create_user",
-      "inputs": { "username": "ada", "name": "Ada L", "email": "ada@example.com", "is_active": true },
-      "expect_request": { "body": { "username": "ada", "name": "Ada L", "email": "ada@example.com", "is_active": true } }
+      "inputs": {
+        "username": "ada",
+        "name": "Ada L",
+        "email": "ada@example.com",
+        "is_active": true
+      },
+      "expect_request": {
+        "body": {
+          "username": "ada",
+          "name": "Ada L",
+          "email": "ada@example.com",
+          "is_active": true
+        }
+      }
     },
     {
       "name": "search users: page_size in the query",
       "operation": "search_users",
-      "inputs": { "search": "ada", "page_size": 5 },
-      "mocks": { "http": { "status": 200, "json": { "results": [{ "pk": 1 }], "pagination": { "count": 1 } } } },
-      "expect_request": { "url": "https://api.example.test/api/v3/core/users/?search=ada&page_size=5" },
-      "expect": { "results": [{ "pk": 1 }], "pagination": { "count": 1 } }
+      "inputs": {
+        "search": "ada",
+        "page_size": 5
+      },
+      "mocks": {
+        "http": {
+          "status": 200,
+          "json": {
+            "results": [
+              {
+                "pk": 1
+              }
+            ],
+            "pagination": {
+              "count": 1
+            }
+          }
+        }
+      },
+      "expect_request": {
+        "url": "https://api.example.test/api/v3/core/users/?search=ada&page_size=5"
+      },
+      "expect": {
+        "results": [
+          {
+            "pk": 1
+          }
+        ],
+        "pagination": {
+          "count": 1
+        }
+      }
     }
   ]
 }

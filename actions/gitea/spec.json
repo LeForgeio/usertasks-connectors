@@ -19,15 +19,9 @@
     "note": "Create the token in Settings > Applications. Use read-only scopes when the flow only reads."
   },
   "auth": {
-    "style": "api_key",
-    "config": {
-      "key_name": "Authorization",
-      "key_value": "token <token>",
-      "add_to": "header"
-    },
     "optional": false,
     "label": "Access Token",
-    "hint": "A personal access token for the user that makes the calls Gitea > Settings > Applications > Generate New Token"
+    "hint": "A personal access token for the user that makes the calls. Create it in Gitea > Settings > Applications > Generate New Token."
   },
   "operations": [
     {

@@ -8,7 +8,7 @@
   "color": "#6366F1",
   "category": "productivity",
   "summary": "Paperclip REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
-  "setup_notes": "Packaged for one Paperclip server (npm run package -- paperclip --url <server URL>). Set the secret \"api_token\" on the Access tab: An agent API key (bearer token) Create an agent key in Paperclip. Do not use a board admin key. An agent API key made for this workflow Only the rights the workflow needs. Each template needs its own right: create tasks, comment, change status, wake agents.",
+  "setup_notes": "Packaged for one Paperclip server (npm run package -- paperclip --url <server URL>). Set the secret \"api_token\" on the Access tab: An agent API key (bearer token). Create an agent key in Paperclip. Do not use a board admin key. An agent API key made for this workflow Only the rights the workflow needs. Each template needs its own right: create tasks, comment, change status, wake agents.",
   "homepage": "https://github.com/LeForgeio/usertasks-connectors",
   "author": "LeForge",
   "license": "Apache-2.0",
@@ -83,13 +83,18 @@
         },
         {
           "name": "status",
+          "label": "Status",
+          "type": "string"
+        },
+        {
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -132,19 +137,24 @@
           "type": "string"
         },
         {
+          "name": "status",
+          "label": "Status",
+          "type": "string"
+        },
+        {
           "name": "assigneeAgentId",
           "label": "Assignee Agent Id",
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -188,14 +198,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -237,13 +247,18 @@
         },
         {
           "name": "status",
+          "label": "Status",
+          "type": "string"
+        },
+        {
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -285,13 +300,18 @@
         },
         {
           "name": "status",
+          "label": "Status",
+          "type": "string"
+        },
+        {
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -314,7 +334,7 @@
       {
         "name": "api_token",
         "label": "API Key",
-        "description": "An agent API key (bearer token) Create an agent key in Paperclip. Do not use a board admin key."
+        "description": "An agent API key (bearer token). Create an agent key in Paperclip. Do not use a board admin key."
       }
     ]
   },

@@ -38,7 +38,7 @@ This runs the tests and writes `release/gitea-1.0.0.zip`. Then, in UserTasks:
 The token goes in the request header as `Bearer secret://api_token`. The
 UserTasks host puts the value in, so the token never enters the sandbox.
 
-Every operation returns `status`, `ok` and `response` (the full body), plus
+Every operation returns `http_status`, `http_ok` and `response` (the full body), plus
 its own outputs. A status that is not 2xx fails the step. A 429 or 5xx can
 be retried with the node's retry setting.
 

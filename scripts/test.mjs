@@ -18,7 +18,19 @@ await esbuild.build({
   external: ['quickjs-emscripten-core', '@jitl/quickjs-singlefile-cjs-release-sync'],
   logLevel: 'warning',
 })
+await esbuild.build({
+  entryPoints: ['harness/rest.test.ts'],
+  outfile: '.harness/rest.test.mjs',
+  bundle: true,
+  format: 'esm',
+  platform: 'node',
+  target: 'node20',
+  define: { __BASE_URL__: JSON.stringify(TEST_URL) },
+  logLevel: 'warning',
+})
 let failed = 0
+const unit = spawnSync(process.execPath, ['--test', '.harness/rest.test.mjs'], { stdio: 'inherit' })
+if (unit.status !== 0) failed++
 for (const name of names) {
   const { dir, out } = await buildAction(name, TEST_URL)
   const args = ['.harness/run.mjs', out, dir, ...(flags.verbose ? ['--verbose'] : [])]

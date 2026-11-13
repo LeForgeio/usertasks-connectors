@@ -7,16 +7,29 @@ import { checkModule, readManifest } from './checks.mjs'
 /** The URL that the tests use. A package for this URL is refused. */
 export const TEST_URL = 'https://api.example.test'
 
-/** Read `<names...> [--url <url>] [--sign <pem>]` from the command line. */
+/** The one secret that every action declares. lib/rest.ts uses the same name. */
+export const TOKEN_SECRET = 'api_token'
+
+const VALUE_FLAGS = new Set(['url', 'sign'])
+const SWITCH_FLAGS = new Set(['verbose'])
+
+/** Read `<names...> [--url <url>] [--sign <pem>] [--verbose]` from the command line. */
 export function parseArgs(argv = process.argv.slice(2)) {
   const names = []
   const flags = {}
   for (let i = 0; i < argv.length; i++) {
-    if (argv[i].startsWith('--')) {
-      const key = argv[i].slice(2)
-      const next = argv[i + 1]
-      if (next !== undefined && !next.startsWith('--')) { flags[key] = next; i++ } else flags[key] = true
-    } else names.push(argv[i])
+    if (!argv[i].startsWith('--')) {
+      names.push(argv[i])
+      continue
+    }
+    const key = argv[i].slice(2)
+    if (SWITCH_FLAGS.has(key)) flags[key] = true
+    else if (VALUE_FLAGS.has(key)) {
+      const value = argv[i + 1]
+      if (value === undefined || value.startsWith('--')) throw new Error(`--${key} needs a value`)
+      flags[key] = value
+      i++
+    } else throw new Error(`Unknown flag --${key}. Known: ${[...VALUE_FLAGS, ...SWITCH_FLAGS].map((f) => `--${f}`).join(', ')}`)
   }
   const all = readdirSync('actions').filter((d) => existsSync(join('actions', d, 'spec.json')))
   for (const n of names) if (!all.includes(n)) throw new Error(`Unknown action "${n}". Known: ${all.join(', ')}`)
@@ -27,7 +40,8 @@ export function parseArgs(argv = process.argv.slice(2)) {
 export function hostOf(url) {
   const u = new URL(url)
   if (u.protocol !== 'https:' && u.protocol !== 'http:') throw new Error(`${url}: use an http or https URL`)
-  if (u.pathname !== '/' && u.pathname !== '') throw new Error(`${url}: give the server root only, with no path`)
+  if (u.username || u.password) throw new Error(`${url}: do not put a user name or password in the URL; set the api_token secret`)
+  if ((u.pathname !== '/' && u.pathname !== '') || u.search || u.hash) throw new Error(`${url}: give the server root only, with no path, query or #`)
   return u.port ? `${u.hostname}:${u.port}` : u.hostname
 }
 
@@ -53,7 +67,7 @@ export async function buildAction(name, url) {
     platform: 'neutral', // the sandbox has no Node or browser built-ins
     target: 'es2020',
     minifySyntax: true,
-    define: { __BASE_URL__: JSON.stringify(url.replace(/\/+$/, '')) },
+    define: { __BASE_URL__: JSON.stringify(new URL(url).origin) },
     banner: { js: `/* ${manifest.key} ${manifest.version} - ${manifest.name} for ${url}. github.com/LeForgeio/usertasks-connectors (Apache-2.0). */` },
     legalComments: 'eof',
     metafile: true,

@@ -7,7 +7,10 @@
  * action calls only the server that you packaged it for.
  *
  * The token goes in the header as `Bearer secret://api_token`. The host puts
- * the secret value in. The value never enters the sandbox.
+ * the secret value in. For an action whose token is optional (ntfy), the
+ * engine first asks the host whether the secret has a value. That read is
+ * the only place where the value enters the sandbox, and the engine does
+ * not keep it.
  */
 import type { ActionContext, ActionDefinition, ActionHttpInit } from '../vendor/usertasks-action/index'
 
@@ -98,25 +101,60 @@ function fill(node: unknown, inputs: Record<string, unknown>): unknown {
 }
 
 /**
+ * Mark the placeholders in a JSON body template so that JSON.parse can
+ * read it. The scan follows JSON strings:
+ * - a string that is only "{{name}}" becomes {"__q": name} (a string value);
+ * - a bare {{name}} outside a string becomes {"__raw": name} (a JSON value);
+ * - a {{name}} inside a longer string stays, and fill() puts the text in.
+ */
+export function markTemplate(template: string): string {
+  let out = ''
+  let i = 0
+  while (i < template.length) {
+    const ch = template[i]
+    if (ch === '"') {
+      let j = i + 1
+      while (j < template.length && template[j] !== '"') j += template[j] === '\\' ? 2 : 1
+      const literal = template.slice(i, j + 1)
+      const only = /^"\{\{(\w+)\}\}"$/.exec(literal)
+      out += only ? JSON.stringify({ __q: only[1] }) : literal
+      i = j + 1
+    } else if (ch === '{' && template[i + 1] === '{') {
+      const m = /^\{\{(\w+)\}\}/.exec(template.slice(i))
+      if (!m) throw new Error(`Bad placeholder in the body template at ${i}`)
+      out += JSON.stringify({ __raw: m[1] })
+      i += m[0].length
+    } else {
+      out += ch
+      i++
+    }
+  }
+  return out
+}
+
+/**
  * Make the request body from the template.
  * - `{{name}}` alone: the value as text (text content type) or as JSON.
  * - A JSON template: "{{name}}" becomes a string, a bare {{name}} becomes
  *   a JSON value (number, boolean, list or object).
  */
-export function buildBody(template: string | null | undefined, inputs: Record<string, unknown>, contentType: string): string | undefined {
+export function buildBody(template: string | null | undefined, inputs: Record<string, unknown>, contentType: string, ctx: Pick<ActionContext, 'fail'>): string | undefined {
   if (!template) return undefined
   const whole = /^\s*\{\{(\w+)\}\}\s*$/.exec(template)
-  if (whole) {
-    const value = inputs[whole[1]]
-    if (isEmpty(value)) return undefined
-    if (contentType.startsWith('text/')) return String(value)
-    const json = asJson(value)
-    return json === OMIT ? undefined : JSON.stringify(json)
+  if (!whole) return JSON.stringify(fill(JSON.parse(markTemplate(template)), inputs))
+  const name = whole[1]
+  const value = inputs[name]
+  if (isEmpty(value)) return undefined
+  if (contentType.startsWith('text/')) return typeof value === 'string' ? value : JSON.stringify(value)
+  if (typeof value === 'string') {
+    try {
+      JSON.parse(value)
+    } catch {
+      ctx.fail(`${name} is not valid JSON`)
+    }
+    return value.trim()
   }
-  const marked = template
-    .replace(/"\{\{(\w+)\}\}"/g, (_, name: string) => JSON.stringify({ __q: name }))
-    .replace(/([:[,]\s*)\{\{(\w+)\}\}/g, (_, before: string, name: string) => `${before}${JSON.stringify({ __raw: name })}`)
-  return JSON.stringify(fill(JSON.parse(marked), inputs))
+  return JSON.stringify(value)
 }
 
 /** Make the full URL: the path values are encoded, empty query values are left out. */
@@ -135,38 +173,45 @@ export function buildUrl(base: string, op: SpecOperation, inputs: Record<string,
   return `${base.replace(/\/+$/, '')}${path}${parts.length ? `?${parts.join('&')}` : ''}`
 }
 
-/** Read the declared outputs from the response, plus status, ok and response. */
+/** The outputs that every operation returns. Spec outputs cannot use these names. */
+export const STANDARD_OUTPUTS = ['http_status', 'http_ok', 'response'] as const
+
+/** Read the declared outputs from the response, plus the standard outputs. */
 export function readOutputs(op: SpecOperation, status: number, ok: boolean, data: unknown): Record<string, unknown> {
-  const outputs: Record<string, unknown> = { status, ok, response: data }
+  const outputs: Record<string, unknown> = {}
   const arrays = op.outputs.filter((o) => o.type === 'array')
   for (const field of op.outputs) {
     if (Array.isArray(data)) outputs[field.name] = field.type === 'array' && arrays.length === 1 ? data : null
     else if (data && typeof data === 'object') outputs[field.name] = (data as Record<string, unknown>)[field.name] ?? null
     else outputs[field.name] = null
   }
-  return outputs
+  // The standard outputs go last, so a body field cannot replace them.
+  return { ...outputs, http_status: status, http_ok: ok, response: data }
 }
 
-function isMissingSecret(error: unknown): boolean {
-  return /has not been set/i.test(String((error as Error)?.message ?? error))
+/** True when the token secret has a value. Only an optional-token action asks. */
+async function tokenIsSet(ctx: ActionContext): Promise<boolean> {
+  try {
+    return (await ctx.secrets.get(`secret://${TOKEN_SECRET}`)) !== ''
+  } catch {
+    return false
+  }
 }
 
 async function call(spec: Spec, op: SpecOperation, inputs: Record<string, unknown>, ctx: ActionContext) {
   const url = buildUrl(__BASE_URL__, op, inputs, ctx)
   const headers: Record<string, string> = { Accept: 'application/json', ...(op.headers ?? {}) }
   const contentType = Object.entries(headers).find(([k]) => k.toLowerCase() === 'content-type')?.[1] ?? ''
-  const body = buildBody(op.body, inputs, contentType || 'application/json')
+  const body = buildBody(op.body, inputs, contentType || 'application/json', ctx)
   if (body !== undefined && !contentType) headers['Content-Type'] = 'application/json'
-  const init: ActionHttpInit = { method: op.method, headers: { ...headers, Authorization: `Bearer secret://${TOKEN_SECRET}` }, body }
+  // A server that needs no token (for example a public ntfy server) gets no
+  // Authorization header when the token is empty. Otherwise the host puts the
+  // secret into the header, and a missing secret fails the step.
+  const login = !spec.auth.optional || (await tokenIsSet(ctx))
+  if (login) headers.Authorization = `Bearer secret://${TOKEN_SECRET}`
+  const init: ActionHttpInit = { method: op.method, headers, body }
 
-  let res
-  try {
-    res = await ctx.http.fetch(url, init)
-  } catch (error) {
-    // A server that needs no token (for example a public ntfy server): call again with no login.
-    if (!spec.auth.optional || !isMissingSecret(error)) throw error
-    res = await ctx.http.fetch(url, { ...init, headers })
-  }
+  const res = await ctx.http.fetch(url, init)
   const data = res.json ?? (res.text === '' ? null : res.text)
   if (!res.ok) {
     const detail = (typeof data === 'string' ? data : JSON.stringify(data) ?? '').slice(0, 300)

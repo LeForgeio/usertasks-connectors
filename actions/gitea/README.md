@@ -13,7 +13,7 @@ npm run package -- gitea --url https://git.example.com
 Upload `release/gitea-1.0.0.zip` in UserTasks: **Extensibility > Workflow actions > Upload**. Then open **Manage > Access** on the action:
 
 1. Approve the host.
-2. Set the secret `api_token`. A personal access token for the user that makes the calls Gitea > Settings > Applications > Generate New Token
+2. Set the secret `api_token`. A personal access token for the user that makes the calls. Create it in Gitea > Settings > Applications > Generate New Token.
 
 Recommended setup:
 
@@ -25,7 +25,7 @@ Create the token in Settings > Applications. Use read-only scopes when the flow 
 
 ## Operations
 
-Every operation also returns `status`, `ok` and `response` (the full body). A status that is not 2xx fails the step (429 and 5xx can be retried).
+Every operation also returns `http_status`, `http_ok` and `response` (the full body). A status that is not 2xx fails the step (429 and 5xx can be retried).
 
 | Id | Name | Call | Inputs (? = optional) |
 |---|---|---|---|

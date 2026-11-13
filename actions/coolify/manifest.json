@@ -8,7 +8,7 @@
   "color": "#6B16ED",
   "category": "cloud",
   "summary": "Coolify REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
-  "setup_notes": "Packaged for one Coolify server (npm run package -- coolify --url <server URL>). Set the secret \"api_token\" on the Access tab: A Coolify API token Create it in Coolify under Keys & Tokens, API tokens Enable the API in Coolify: Settings, Configuration, Advanced, API Access Create an API token: Keys & Tokens, API tokens Give the token only the permissions it needs (read, write, deploy)",
+  "setup_notes": "Packaged for one Coolify server (npm run package -- coolify --url <server URL>). Set the secret \"api_token\" on the Access tab: A Coolify API token. Create it in Coolify under Keys & Tokens, API tokens. Enable the API in Coolify: Settings, Configuration, Advanced, API Access Create an API token: Keys & Tokens, API tokens Give the token only the permissions it needs (read, write, deploy)",
   "homepage": "https://github.com/LeForgeio/usertasks-connectors",
   "author": "LeForge",
   "license": "Apache-2.0",
@@ -37,14 +37,14 @@
           "type": "array"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -83,6 +83,11 @@
           "type": "string"
         },
         {
+          "name": "status",
+          "label": "Status",
+          "type": "string"
+        },
+        {
           "name": "fqdn",
           "label": "Fqdn",
           "type": "string"
@@ -98,14 +103,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -149,14 +154,14 @@
           "type": "array"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -194,14 +199,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -255,14 +260,14 @@
           "type": "array"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -298,14 +303,14 @@
           "type": "array"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -365,14 +370,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -429,14 +434,14 @@
           "type": "string"
         },
         {
-          "name": "status",
+          "name": "http_status",
           "label": "HTTP status",
           "type": "integer",
           "description": "The HTTP status code of the response"
         },
         {
-          "name": "ok",
-          "label": "OK",
+          "name": "http_ok",
+          "label": "HTTP OK",
           "type": "boolean",
           "description": "True when the status is 2xx"
         },
@@ -459,7 +464,7 @@
       {
         "name": "api_token",
         "label": "API Token",
-        "description": "A Coolify API token Create it in Coolify under Keys & Tokens, API tokens"
+        "description": "A Coolify API token. Create it in Coolify under Keys & Tokens, API tokens."
       }
     ]
   },

@@ -3,32 +3,109 @@
     {
       "name": "call service: the data object is the body",
       "operation": "call_service",
-      "inputs": { "domain": "light", "service": "turn_on", "data": { "entity_id": "light.kitchen", "brightness": 200 } },
-      "mocks": { "http": { "status": 200, "json": [{ "entity_id": "light.kitchen", "state": "on" }] } },
-      "expect_request": { "method": "POST", "url": "https://api.example.test/api/services/light/turn_on", "body": { "entity_id": "light.kitchen", "brightness": 200 } },
-      "expect": { "changed_states": [{ "entity_id": "light.kitchen", "state": "on" }] }
+      "inputs": {
+        "domain": "light",
+        "service": "turn_on",
+        "data": {
+          "entity_id": "light.kitchen",
+          "brightness": 200
+        }
+      },
+      "mocks": {
+        "http": {
+          "status": 200,
+          "json": [
+            {
+              "entity_id": "light.kitchen",
+              "state": "on"
+            }
+          ]
+        }
+      },
+      "expect_request": {
+        "method": "POST",
+        "url": "https://api.example.test/api/services/light/turn_on",
+        "body": {
+          "entity_id": "light.kitchen",
+          "brightness": 200
+        }
+      },
+      "expect": {
+        "changed_states": [
+          {
+            "entity_id": "light.kitchen",
+            "state": "on"
+          }
+        ]
+      }
     },
     {
       "name": "call service: data given as JSON text",
       "operation": "call_service",
-      "inputs": { "domain": "switch", "service": "toggle", "data": "{\"entity_id\": \"switch.fan\"}" },
-      "expect_request": { "body": { "entity_id": "switch.fan" } }
+      "inputs": {
+        "domain": "switch",
+        "service": "toggle",
+        "data": "{\"entity_id\": \"switch.fan\"}"
+      },
+      "expect_request": {
+        "body": {
+          "entity_id": "switch.fan"
+        }
+      }
     },
     {
       "name": "render template: the template is a JSON string",
       "operation": "render_template",
-      "inputs": { "template": "{{ states('sun.sun') }} \"x\"" },
-      "mocks": { "http": { "status": 200, "text": "above_horizon \"x\"" } },
-      "expect_request": { "url": "https://api.example.test/api/template", "body": { "template": "{{ states('sun.sun') }} \"x\"" } },
-      "expect": { "response": "above_horizon \"x\"" }
+      "inputs": {
+        "template": "{{ states('sun.sun') }} \"x\""
+      },
+      "mocks": {
+        "http": {
+          "status": 200,
+          "text": "above_horizon \"x\""
+        }
+      },
+      "expect_request": {
+        "url": "https://api.example.test/api/template",
+        "body": {
+          "template": "{{ states('sun.sun') }} \"x\""
+        }
+      },
+      "expect": {
+        "response": "above_horizon \"x\""
+      }
     },
     {
       "name": "get state: the entity id goes in the path",
       "operation": "get_state",
-      "inputs": { "entity_id": "sensor.outside_temp" },
-      "mocks": { "http": { "status": 200, "json": { "entity_id": "sensor.outside_temp", "state": "21.5" } } },
-      "expect_request": { "url": "https://api.example.test/api/states/sensor.outside_temp" },
-      "expect": { "state": "21.5" }
+      "inputs": {
+        "entity_id": "sensor.outside_temp"
+      },
+      "mocks": {
+        "http": {
+          "status": 200,
+          "json": {
+            "entity_id": "sensor.outside_temp",
+            "state": "21.5"
+          }
+        }
+      },
+      "expect_request": {
+        "url": "https://api.example.test/api/states/sensor.outside_temp"
+      },
+      "expect": {
+        "state": "21.5"
+      }
+    },
+    {
+      "name": "call service: data that is not JSON fails before the call",
+      "operation": "call_service",
+      "inputs": {
+        "domain": "light",
+        "service": "turn_on",
+        "data": "entity_id: light.x"
+      },
+      "expect_error": "action"
     }
   ]
 }
