@@ -1,0 +1,9 @@
+UserTasks connectors by LeForge
+Copyright 2026 LeForge
+
+This product includes software from UserTasks
+(https://github.com/homepresso/User-Tasks), licensed under the Apache
+License, Version 2.0:
+- vendor/usertasks-action/ (the UserTasks custom action SDK)
+- scripts/checks.mjs and scripts/zip.mjs (from the UserTasks action
+  starter kit)

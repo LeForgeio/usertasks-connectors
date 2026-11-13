@@ -1,0 +1,201 @@
+{
+  "manifest_version": 1,
+  "key": "leforge",
+  "name": "LeForge",
+  "version": "1.0.0",
+  "description": "Run LeForge actions and publish Fabric events from a workflow",
+  "icon": "hammer",
+  "color": "#7C3AED",
+  "category": "productivity",
+  "summary": "LeForge REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
+  "setup_notes": "Packaged for one LeForge server (npm run package -- leforge --url <server URL>). Set the secret \"api_token\" on the Access tab: A LeForge API key. It starts with fhk_. Create it in LeForge under Settings, API keys An API key made for this workflow engine only Scope actions:read to list actions. The connection test also needs it. The scope of each action the workflow runs Scope fabric:publish to publish Fabric events",
+  "homepage": "https://github.com/LeForgeio/usertasks-connectors",
+  "author": "LeForge",
+  "license": "Apache-2.0",
+  "tags": [
+    "leforge",
+    "leforge"
+  ],
+  "operations": [
+    {
+      "id": "health",
+      "label": "Health",
+      "description": "Check that the LeForge server is up",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    },
+    {
+      "id": "list_actions",
+      "label": "List Actions",
+      "description": "List the actions that this key may run",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "actions",
+          "label": "Actions",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    },
+    {
+      "id": "run_action",
+      "label": "Run Action",
+      "description": "Run one action by its id",
+      "inputs": [
+        {
+          "name": "action_id",
+          "label": "Action id",
+          "type": "string",
+          "required": true,
+          "description": "Action id, from List Actions",
+          "example": "example-action_id"
+        },
+        {
+          "name": "input",
+          "label": "Input",
+          "type": "json",
+          "description": "The input object of the action",
+          "default": "{}",
+          "example": "{}"
+        },
+        {
+          "name": "dryRun",
+          "label": "Dry Run",
+          "type": "string",
+          "description": "true to check the action without a change (only if the action supports it)",
+          "example": "example-dryRun"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "result",
+          "label": "Result",
+          "type": "json"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "publish_event",
+      "label": "Publish Fabric Event",
+      "description": "Publish one event to the LeForge event Fabric",
+      "inputs": [
+        {
+          "name": "type",
+          "label": "Type",
+          "type": "string",
+          "required": true,
+          "description": "Event type, for example app.myapp.job.done",
+          "example": "example-type"
+        },
+        {
+          "name": "payload",
+          "label": "Payload",
+          "type": "json",
+          "description": "The event payload",
+          "default": "{}",
+          "example": "{}"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "accepted",
+          "label": "Accepted",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "http": {
+      "hosts": [
+        "your-server.invalid"
+      ]
+    },
+    "credentials": [
+      {
+        "name": "api_token",
+        "label": "API Key",
+        "description": "A LeForge API key. It starts with fhk_. Create it in LeForge under Settings, API keys"
+      }
+    ]
+  },
+  "limits": {
+    "timeout_ms": 30000,
+    "memory_mb": 32
+  }
+}

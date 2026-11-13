@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "name": "create issue: JSON field names differ from the inputs; empty ones are left out",
+      "operation": "create_issue",
+      "inputs": { "company_id": "c1", "title": "Ship it", "description": "Do the thing", "assignee_agent_id": "agent-9" },
+      "mocks": { "http": { "status": 201, "json": { "id": "i1", "identifier": "LAV-1", "status": "todo" } } },
+      "expect_request": { "method": "POST", "url": "https://api.example.test/api/companies/c1/issues", "body": { "title": "Ship it", "description": "Do the thing", "assigneeAgentId": "agent-9" } },
+      "expect": { "identifier": "LAV-1" }
+    },
+    {
+      "name": "wake agent: the fixed source stays",
+      "operation": "wake_agent",
+      "inputs": { "agent_id": "a1", "reason": "new task" },
+      "expect_request": { "url": "https://api.example.test/api/agents/a1/wakeup", "body": { "source": "automation", "reason": "new task" } }
+    }
+  ]
+}

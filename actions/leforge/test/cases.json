@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "name": "run action: the input object is the body, dryRun in the query",
+      "operation": "run_action",
+      "inputs": { "action_id": "user.provision", "input": { "username": "ada" }, "dryRun": "true" },
+      "mocks": { "http": { "status": 200, "json": { "ok": true, "result": { "id": 7 } } } },
+      "expect_request": { "method": "POST", "url": "https://api.example.test/api/v1/actions/user.provision?dryRun=true", "body": { "username": "ada" } },
+      "expect": { "ok": true, "result": { "id": 7 } }
+    },
+    {
+      "name": "publish event: nested template with a JSON payload",
+      "operation": "publish_event",
+      "inputs": { "type": "deploy.done", "payload": "{\"app\": \"site\", \"ok\": true}" },
+      "expect_request": { "url": "https://api.example.test/api/v1/fabric/events", "body": { "event": { "type": "deploy.done", "payload": { "app": "site", "ok": true } } } }
+    }
+  ]
+}

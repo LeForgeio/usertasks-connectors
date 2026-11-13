@@ -1,0 +1,340 @@
+{
+  "key": "authentik",
+  "name": "Authentik",
+  "version": "1.0.0",
+  "description": "Manage users, groups and application access in an Authentik identity provider",
+  "icon": "key-round",
+  "color": "#FD4B2D",
+  "category": "productivity",
+  "docs_url": "https://docs.goauthentik.io/developer-docs/api/",
+  "default_url": null,
+  "url_example": "https://authentik.example.com",
+  "setup": {
+    "title": "Recommended Authentik Setup",
+    "items": [
+      "A service account user for this connector",
+      "An API token for that user (Directory > Tokens and App passwords, intent \"API Token\")",
+      "A role that can view and change users and groups, and nothing more"
+    ],
+    "note": "The API schema of your server is at <server URL>/api/v3/schema/."
+  },
+  "auth": {
+    "style": "bearer",
+    "config": {
+      "token": "<token>"
+    },
+    "optional": false,
+    "label": "API Token",
+    "hint": "Sent as a bearer token Create it in the admin interface: Directory > Tokens and App passwords"
+  },
+  "operations": [
+    {
+      "id": "get_current_user",
+      "label": "Get Current User",
+      "description": "Return the user that owns the API token",
+      "method": "GET",
+      "path": "/api/v3/core/users/me/",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "user",
+          "type": "json"
+        }
+      ]
+    },
+    {
+      "id": "search_users",
+      "label": "Search Users",
+      "description": "Find users by name, user name or email",
+      "method": "GET",
+      "path": "/api/v3/core/users/",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "search",
+          "input": "search"
+        },
+        {
+          "param": "page_size",
+          "input": "page_size"
+        }
+      ],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "search",
+          "type": "string",
+          "required": false,
+          "description": "Text to look for"
+        },
+        {
+          "name": "page_size",
+          "type": "number",
+          "required": false,
+          "description": "Users per page",
+          "default": "20"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "results",
+          "type": "array"
+        },
+        {
+          "name": "pagination",
+          "type": "json"
+        }
+      ]
+    },
+    {
+      "id": "get_user",
+      "label": "Get User",
+      "description": "Get one user by its numeric id (pk)",
+      "method": "GET",
+      "path": "/api/v3/core/users/{{user_pk}}/",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "user_pk",
+          "type": "number",
+          "required": true,
+          "description": "User id (pk)"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "pk",
+          "type": "number"
+        },
+        {
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "is_active",
+          "type": "boolean"
+        },
+        {
+          "name": "groups_obj",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "create_user",
+      "label": "Create User",
+      "description": "Create a user. The user has no password until someone sets one in Authentik.",
+      "method": "POST",
+      "path": "/api/v3/core/users/",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"username\": \"{{username}}\", \"name\": \"{{name}}\", \"email\": \"{{email}}\", \"is_active\": {{is_active}}}",
+      "inputs": [
+        {
+          "name": "username",
+          "type": "string",
+          "required": true,
+          "description": "Unique user name"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "Display name"
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "required": true,
+          "description": "Email address"
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "required": false,
+          "description": "true if the user can sign in",
+          "default": "true"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "pk",
+          "type": "number"
+        },
+        {
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "name": "uuid",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "add_user_to_group",
+      "label": "Add User to Group",
+      "description": "Add a user to a group",
+      "method": "POST",
+      "path": "/api/v3/core/groups/{{group_uuid}}/add_user/",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"pk\": {{user_pk}}}",
+      "inputs": [
+        {
+          "name": "group_uuid",
+          "type": "string",
+          "required": true,
+          "description": "Group UUID (from List Groups)"
+        },
+        {
+          "name": "user_pk",
+          "type": "number",
+          "required": true,
+          "description": "User id (pk)"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "remove_user_from_group",
+      "label": "Remove User from Group",
+      "description": "Remove a user from a group",
+      "method": "POST",
+      "path": "/api/v3/core/groups/{{group_uuid}}/remove_user/",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"pk\": {{user_pk}}}",
+      "inputs": [
+        {
+          "name": "group_uuid",
+          "type": "string",
+          "required": true,
+          "description": "Group UUID (from List Groups)"
+        },
+        {
+          "name": "user_pk",
+          "type": "number",
+          "required": true,
+          "description": "User id (pk)"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "list_groups",
+      "label": "List Groups",
+      "description": "List groups",
+      "method": "GET",
+      "path": "/api/v3/core/groups/",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "search",
+          "input": "search"
+        },
+        {
+          "param": "page_size",
+          "input": "page_size"
+        }
+      ],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "search",
+          "type": "string",
+          "required": false,
+          "description": "Text to look for"
+        },
+        {
+          "name": "page_size",
+          "type": "number",
+          "required": false,
+          "description": "Groups per page",
+          "default": "20"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "results",
+          "type": "array"
+        },
+        {
+          "name": "pagination",
+          "type": "json"
+        }
+      ]
+    },
+    {
+      "id": "list_applications",
+      "label": "List Applications",
+      "description": "List applications",
+      "method": "GET",
+      "path": "/api/v3/core/applications/",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "search",
+          "input": "search"
+        },
+        {
+          "param": "page_size",
+          "input": "page_size"
+        }
+      ],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "search",
+          "type": "string",
+          "required": false,
+          "description": "Text to look for"
+        },
+        {
+          "name": "page_size",
+          "type": "number",
+          "required": false,
+          "description": "Applications per page",
+          "default": "20"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "results",
+          "type": "array"
+        },
+        {
+          "name": "pagination",
+          "type": "json"
+        }
+      ]
+    }
+  ]
+}

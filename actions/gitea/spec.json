@@ -1,0 +1,631 @@
+{
+  "key": "gitea",
+  "name": "Gitea",
+  "version": "1.0.0",
+  "description": "Manage repositories, issues, pull requests, commit statuses and Actions runs on a Gitea server",
+  "icon": "git-branch",
+  "color": "#609926",
+  "category": "productivity",
+  "docs_url": "https://docs.gitea.com/api/1.26/",
+  "default_url": null,
+  "url_example": "https://git.example.com",
+  "setup": {
+    "title": "Recommended Gitea Setup",
+    "items": [
+      "A personal access token from a dedicated bot user",
+      "Scopes: read:user, read:repository, write:repository, write:issue (add read:organization for organization repositories)",
+      "Add the bot user as a collaborator only on the repositories it must change"
+    ],
+    "note": "Create the token in Settings > Applications. Use read-only scopes when the flow only reads."
+  },
+  "auth": {
+    "style": "api_key",
+    "config": {
+      "key_name": "Authorization",
+      "key_value": "token <token>",
+      "add_to": "header"
+    },
+    "optional": false,
+    "label": "Access Token",
+    "hint": "A personal access token for the user that makes the calls Gitea > Settings > Applications > Generate New Token"
+  },
+  "operations": [
+    {
+      "id": "get_repository",
+      "label": "Get Repository",
+      "description": "Read the details of one repository",
+      "method": "GET",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "type": "number"
+        },
+        {
+          "name": "full_name",
+          "type": "string"
+        },
+        {
+          "name": "default_branch",
+          "type": "string"
+        },
+        {
+          "name": "html_url",
+          "type": "string"
+        },
+        {
+          "name": "private",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "id": "list_issues",
+      "label": "List Issues",
+      "description": "List the issues of a repository (pull requests are not included)",
+      "method": "GET",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}/issues",
+      "query_fixed": {
+        "type": "issues"
+      },
+      "query": [
+        {
+          "param": "state",
+          "input": "state"
+        },
+        {
+          "param": "labels",
+          "input": "labels"
+        },
+        {
+          "param": "page",
+          "input": "page"
+        },
+        {
+          "param": "limit",
+          "input": "limit"
+        }
+      ],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        },
+        {
+          "name": "state",
+          "type": "string",
+          "required": false,
+          "description": "open, closed or all",
+          "default": "open"
+        },
+        {
+          "name": "labels",
+          "type": "string",
+          "required": false,
+          "description": "Comma-separated label names"
+        },
+        {
+          "name": "page",
+          "type": "number",
+          "required": false,
+          "description": "Page number, starting at 1",
+          "default": "1"
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "required": false,
+          "description": "Items per page (the server caps this, often at 50)",
+          "default": "30"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "issues",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "create_issue",
+      "label": "Create Issue",
+      "description": "Open a new issue",
+      "method": "POST",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}/issues",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"title\": \"{{title}}\", \"body\": \"{{body}}\", \"labels\": {{label_ids}}}",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "description": "Issue title"
+        },
+        {
+          "name": "body",
+          "type": "text",
+          "required": false,
+          "description": "Issue text (Markdown)",
+          "default": ""
+        },
+        {
+          "name": "label_ids",
+          "type": "json",
+          "required": false,
+          "description": "List of label IDs (numbers), for example [1, 4]. Gitea needs IDs here, not names.",
+          "default": "[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "number",
+          "type": "number"
+        },
+        {
+          "name": "html_url",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "comment_on_issue",
+      "label": "Comment on Issue or Pull Request",
+      "description": "Add a comment to an issue or a pull request",
+      "method": "POST",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}/issues/{{index}}/comments",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"body\": \"{{body}}\"}",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "required": true,
+          "description": "Issue or pull request number"
+        },
+        {
+          "name": "body",
+          "type": "text",
+          "required": true,
+          "description": "Comment text (Markdown)"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "type": "number"
+        },
+        {
+          "name": "html_url",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "close_issue",
+      "label": "Close Issue",
+      "description": "Set the state of an issue to closed",
+      "method": "PATCH",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}/issues/{{index}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"state\": \"closed\"}",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "required": true,
+          "description": "Issue number"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "number",
+          "type": "number"
+        },
+        {
+          "name": "state",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "list_pull_requests",
+      "label": "List Pull Requests",
+      "description": "List the pull requests of a repository",
+      "method": "GET",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}/pulls",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "state",
+          "input": "state"
+        },
+        {
+          "param": "page",
+          "input": "page"
+        },
+        {
+          "param": "limit",
+          "input": "limit"
+        }
+      ],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        },
+        {
+          "name": "state",
+          "type": "string",
+          "required": false,
+          "description": "open, closed or all",
+          "default": "open"
+        },
+        {
+          "name": "page",
+          "type": "number",
+          "required": false,
+          "description": "Page number, starting at 1",
+          "default": "1"
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "required": false,
+          "description": "Items per page (the server caps this, often at 50)",
+          "default": "30"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "pull_requests",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "get_pull_request",
+      "label": "Get Pull Request",
+      "description": "Read one pull request",
+      "method": "GET",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}/pulls/{{index}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "required": true,
+          "description": "Pull request number"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "number",
+          "type": "number"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "type": "string"
+        },
+        {
+          "name": "merged",
+          "type": "boolean"
+        },
+        {
+          "name": "mergeable",
+          "type": "boolean"
+        },
+        {
+          "name": "html_url",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "create_pull_request",
+      "label": "Create Pull Request",
+      "description": "Open a pull request from one branch into another",
+      "method": "POST",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}/pulls",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"head\": \"{{head}}\", \"base\": \"{{base}}\", \"title\": \"{{title}}\", \"body\": \"{{body}}\"}",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        },
+        {
+          "name": "head",
+          "type": "string",
+          "required": true,
+          "description": "Branch with the changes. Use user:branch for a fork."
+        },
+        {
+          "name": "base",
+          "type": "string",
+          "required": true,
+          "description": "Branch to merge into"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "description": "Pull request title"
+        },
+        {
+          "name": "body",
+          "type": "text",
+          "required": false,
+          "description": "Pull request text (Markdown)",
+          "default": ""
+        }
+      ],
+      "outputs": [
+        {
+          "name": "number",
+          "type": "number"
+        },
+        {
+          "name": "html_url",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "set_commit_status",
+      "label": "Set Commit Status",
+      "description": "Report the result of a check on a commit",
+      "method": "POST",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}/statuses/{{sha}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"state\": \"{{state}}\", \"context\": \"{{context}}\", \"description\": \"{{description}}\", \"target_url\": \"{{target_url}}\"}",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        },
+        {
+          "name": "sha",
+          "type": "string",
+          "required": true,
+          "description": "Full commit SHA"
+        },
+        {
+          "name": "state",
+          "type": "string",
+          "required": true,
+          "description": "pending, success, error, failure or warning"
+        },
+        {
+          "name": "context",
+          "type": "string",
+          "required": false,
+          "description": "Name of the check",
+          "default": "default"
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "description": "Short text about the result",
+          "default": ""
+        },
+        {
+          "name": "target_url",
+          "type": "string",
+          "required": false,
+          "description": "Link to the details of the check",
+          "default": ""
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "type": "number"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "name": "context",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "list_actions_runs",
+      "label": "List Actions Runs",
+      "description": "List the Gitea Actions workflow runs of a repository (needs Gitea 1.24 or later)",
+      "method": "GET",
+      "path": "/api/v1/repos/{{owner}}/{{repo}}/actions/runs",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "page",
+          "input": "page"
+        },
+        {
+          "param": "limit",
+          "input": "limit"
+        }
+      ],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)"
+        },
+        {
+          "name": "repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name"
+        },
+        {
+          "name": "page",
+          "type": "number",
+          "required": false,
+          "description": "Page number, starting at 1",
+          "default": "1"
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "required": false,
+          "description": "Items per page (the server caps this, often at 50)",
+          "default": "30"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "workflow_runs",
+          "type": "array"
+        },
+        {
+          "name": "total_count",
+          "type": "number"
+        }
+      ]
+    }
+  ]
+}

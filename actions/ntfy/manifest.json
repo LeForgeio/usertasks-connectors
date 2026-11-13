@@ -1,0 +1,170 @@
+{
+  "manifest_version": 1,
+  "key": "ntfy",
+  "name": "ntfy",
+  "version": "1.0.0",
+  "description": "Send push notifications to phones and desktops through an ntfy server",
+  "icon": "inbox",
+  "color": "#338574",
+  "category": "communication",
+  "summary": "ntfy REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
+  "setup_notes": "Packaged for one ntfy server (npm run package -- ntfy --url <server URL>). Set the secret \"api_token\" on the Access tab (optional for this server type): Optional. Leave empty for a server that allows anonymous publish. Create it on the server with: ntfy token add <user> A topic for each alert stream An access token with write access to those topics (ntfy token add)",
+  "homepage": "https://github.com/LeForgeio/usertasks-connectors",
+  "author": "LeForge",
+  "license": "Apache-2.0",
+  "tags": [
+    "leforge",
+    "ntfy"
+  ],
+  "operations": [
+    {
+      "id": "send_message",
+      "label": "Send Message",
+      "description": "Publish a notification to a topic",
+      "inputs": [
+        {
+          "name": "topic",
+          "label": "Topic",
+          "type": "string",
+          "required": true,
+          "description": "Topic name",
+          "example": "example-topic"
+        },
+        {
+          "name": "message",
+          "label": "Message",
+          "type": "text",
+          "required": true,
+          "description": "Message text",
+          "example": "example-message"
+        },
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "string",
+          "description": "Title shown above the message",
+          "example": "example-title"
+        },
+        {
+          "name": "priority",
+          "label": "Priority",
+          "type": "string",
+          "description": "1 (min) to 5 (max), or min, low, default, high, urgent",
+          "default": "3",
+          "example": "3"
+        },
+        {
+          "name": "tags",
+          "label": "Tags",
+          "type": "string",
+          "description": "Comma-separated tags; emoji short codes such as warning or white_check_mark show as emoji",
+          "example": "example-tags"
+        },
+        {
+          "name": "click",
+          "label": "Click",
+          "type": "string",
+          "description": "URL to open when the notification is tapped",
+          "example": "example-click"
+        },
+        {
+          "name": "markdown",
+          "label": "Markdown",
+          "type": "string",
+          "description": "yes to render the message as Markdown",
+          "example": "example-markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "label": "Id",
+          "type": "string"
+        },
+        {
+          "name": "time",
+          "label": "Time",
+          "type": "number"
+        },
+        {
+          "name": "topic",
+          "label": "Topic",
+          "type": "string"
+        },
+        {
+          "name": "message",
+          "label": "Message",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "server_health",
+      "label": "Server Health",
+      "description": "Check that the ntfy server is up",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "healthy",
+          "label": "Healthy",
+          "type": "boolean"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    }
+  ],
+  "capabilities": {
+    "http": {
+      "hosts": [
+        "ntfy.sh"
+      ]
+    },
+    "credentials": [
+      {
+        "name": "api_token",
+        "label": "Access Token",
+        "description": "Optional. Leave empty for a server that allows anonymous publish. Create it on the server with: ntfy token add <user>"
+      }
+    ]
+  },
+  "limits": {
+    "timeout_ms": 30000,
+    "memory_mb": 32
+  }
+}

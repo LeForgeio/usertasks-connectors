@@ -1,0 +1,346 @@
+{
+  "key": "coolify",
+  "name": "Coolify",
+  "version": "1.0.0",
+  "description": "List, deploy and restart applications and manage their environment variables on a Coolify server",
+  "icon": "rocket",
+  "color": "#6B16ED",
+  "category": "cloud",
+  "docs_url": "https://coolify.io/docs/api-reference/",
+  "default_url": null,
+  "url_example": "https://coolify.example.com",
+  "setup": {
+    "title": "Recommended Coolify Setup",
+    "items": [
+      "Enable the API in Coolify: Settings, Configuration, Advanced, API Access",
+      "Create an API token: Keys & Tokens, API tokens",
+      "Give the token only the permissions it needs (read, write, deploy)"
+    ],
+    "note": "A token with the read permission cannot see sensitive values such as environment variable values."
+  },
+  "auth": {
+    "style": "bearer",
+    "config": {
+      "token": "<token>"
+    },
+    "optional": false,
+    "label": "API Token",
+    "hint": "A Coolify API token Create it in Coolify under Keys & Tokens, API tokens"
+  },
+  "operations": [
+    {
+      "id": "list_applications",
+      "label": "List Applications",
+      "description": "List all applications",
+      "method": "GET",
+      "path": "/api/v1/applications",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "tag",
+          "input": "tag"
+        }
+      ],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "tag",
+          "type": "string",
+          "required": false,
+          "description": "Only show applications with this tag"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "applications",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "get_application",
+      "label": "Get Application",
+      "description": "Get one application by UUID",
+      "method": "GET",
+      "path": "/api/v1/applications/{{uuid}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "uuid",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "name": "fqdn",
+          "type": "string"
+        },
+        {
+          "name": "git_repository",
+          "type": "string"
+        },
+        {
+          "name": "git_branch",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "deploy",
+      "label": "Deploy Application",
+      "description": "Start a deployment of an application",
+      "method": "POST",
+      "path": "/api/v1/deploy",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "uuid",
+          "input": "uuid"
+        },
+        {
+          "param": "force",
+          "input": "force"
+        }
+      ],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID"
+        },
+        {
+          "name": "force",
+          "type": "string",
+          "required": false,
+          "description": "true to rebuild without cache",
+          "default": "false"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "deployments",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "restart_application",
+      "label": "Restart Application",
+      "description": "Restart an application without a new build",
+      "method": "POST",
+      "path": "/api/v1/applications/{{uuid}}/restart",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "deployment_uuid",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "list_deployments",
+      "label": "List Deployments of an Application",
+      "description": "List the deployments of one application, newest first",
+      "method": "GET",
+      "path": "/api/v1/deployments/applications/{{uuid}}",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "skip",
+          "input": "skip"
+        },
+        {
+          "param": "take",
+          "input": "take"
+        }
+      ],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID"
+        },
+        {
+          "name": "skip",
+          "type": "number",
+          "required": false,
+          "description": "Number of deployments to skip",
+          "default": "0"
+        },
+        {
+          "name": "take",
+          "type": "number",
+          "required": false,
+          "description": "Number of deployments to return",
+          "default": "10"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "count",
+          "type": "number"
+        },
+        {
+          "name": "deployments",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "list_envs",
+      "label": "List Environment Variables",
+      "description": "List the environment variables of an application",
+      "method": "GET",
+      "path": "/api/v1/applications/{{uuid}}/envs",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "envs",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "create_env",
+      "label": "Create Environment Variable",
+      "description": "Add a new environment variable to an application",
+      "method": "POST",
+      "path": "/api/v1/applications/{{uuid}}/envs",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"key\": \"{{key}}\", \"value\": \"{{value}}\", \"is_preview\": {{is_preview}}}",
+      "inputs": [
+        {
+          "name": "uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID"
+        },
+        {
+          "name": "key",
+          "type": "string",
+          "required": true,
+          "description": "Variable name"
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": true,
+          "description": "Variable value"
+        },
+        {
+          "name": "is_preview",
+          "type": "string",
+          "required": false,
+          "description": "true to set it for preview deployments, false for production",
+          "default": "false"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "uuid",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "update_env",
+      "label": "Update Environment Variable",
+      "description": "Change the value of an existing environment variable",
+      "method": "PATCH",
+      "path": "/api/v1/applications/{{uuid}}/envs",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"key\": \"{{key}}\", \"value\": \"{{value}}\", \"is_preview\": {{is_preview}}}",
+      "inputs": [
+        {
+          "name": "uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID"
+        },
+        {
+          "name": "key",
+          "type": "string",
+          "required": true,
+          "description": "Variable name"
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": true,
+          "description": "Variable value"
+        },
+        {
+          "name": "is_preview",
+          "type": "string",
+          "required": false,
+          "description": "true to set it for preview deployments, false for production",
+          "default": "false"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

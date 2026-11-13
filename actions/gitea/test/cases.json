@@ -1,0 +1,51 @@
+{
+  "cases": [
+    {
+      "name": "create issue: JSON body, label ids as a list",
+      "operation": "create_issue",
+      "inputs": { "owner": "LeForgeio", "repo": "leforge", "title": "Fix \"quotes\"", "body": "Line 1\nLine 2", "label_ids": "[3, 7]" },
+      "mocks": { "http": { "status": 201, "json": { "number": 42, "html_url": "https://git.example/i/42", "state": "open" } } },
+      "expect_request": {
+        "method": "POST",
+        "url": "https://api.example.test/api/v1/repos/LeForgeio/leforge/issues",
+        "headers": { "Authorization": "Bearer test-token", "Content-Type": "application/json" },
+        "body": { "title": "Fix \"quotes\"", "body": "Line 1\nLine 2", "labels": [3, 7] }
+      },
+      "expect": { "number": 42, "state": "open", "status": 201 }
+    },
+    {
+      "name": "create issue: empty fields are left out",
+      "operation": "create_issue",
+      "inputs": { "owner": "o", "repo": "r", "title": "Only a title" },
+      "expect_request": { "body": { "title": "Only a title" } }
+    },
+    {
+      "name": "list issues: fixed and given query values, a list output",
+      "operation": "list_issues",
+      "inputs": { "owner": "o", "repo": "r", "state": "closed", "page": 2, "limit": 10 },
+      "mocks": { "http": { "status": 200, "json": [{ "number": 1 }, { "number": 2 }] } },
+      "expect_request": { "method": "GET", "url": "https://api.example.test/api/v1/repos/o/r/issues?type=issues&state=closed&page=2&limit=10", "body": null },
+      "expect": { "issues": [{ "number": 1 }, { "number": 2 }] }
+    },
+    {
+      "name": "close issue sends a fixed body",
+      "operation": "close_issue",
+      "inputs": { "owner": "o", "repo": "r", "index": 5 },
+      "expect_request": { "method": "PATCH", "url": "https://api.example.test/api/v1/repos/o/r/issues/5", "body": { "state": "closed" } }
+    },
+    {
+      "name": "no token set fails the step (the token is required)",
+      "operation": "get_repository",
+      "inputs": { "owner": "o", "repo": "r" },
+      "mocks": { "secrets": {} },
+      "expect_error": "host"
+    },
+    {
+      "name": "a 502 fails the step",
+      "operation": "get_repository",
+      "inputs": { "owner": "o", "repo": "r" },
+      "mocks": { "http": { "status": 502, "text": "Bad gateway" } },
+      "expect_error": "action"
+    }
+  ]
+}

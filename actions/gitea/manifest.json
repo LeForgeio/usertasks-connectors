@@ -1,0 +1,824 @@
+{
+  "manifest_version": 1,
+  "key": "gitea",
+  "name": "Gitea",
+  "version": "1.0.0",
+  "description": "Manage repositories, issues, pull requests, commit statuses and Actions runs on a Gitea server",
+  "icon": "git-branch",
+  "color": "#609926",
+  "category": "productivity",
+  "summary": "Gitea REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
+  "setup_notes": "Packaged for one Gitea server (npm run package -- gitea --url <server URL>). Set the secret \"api_token\" on the Access tab: A personal access token for the user that makes the calls Gitea > Settings > Applications > Generate New Token A personal access token from a dedicated bot user Scopes: read:user, read:repository, write:repository, write:issue (add read:organization for organization repositories) Add the bot user as a collaborator only on the repositories it must change",
+  "homepage": "https://github.com/LeForgeio/usertasks-connectors",
+  "author": "LeForge",
+  "license": "Apache-2.0",
+  "tags": [
+    "leforge",
+    "gitea"
+  ],
+  "operations": [
+    {
+      "id": "get_repository",
+      "label": "Get Repository",
+      "description": "Read the details of one repository",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "label": "Id",
+          "type": "number"
+        },
+        {
+          "name": "full_name",
+          "label": "Full name",
+          "type": "string"
+        },
+        {
+          "name": "default_branch",
+          "label": "Default branch",
+          "type": "string"
+        },
+        {
+          "name": "html_url",
+          "label": "Html url",
+          "type": "string"
+        },
+        {
+          "name": "private",
+          "label": "Private",
+          "type": "boolean"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "owner": "example-owner",
+        "repo": "example-repo"
+      }
+    },
+    {
+      "id": "list_issues",
+      "label": "List Issues",
+      "description": "List the issues of a repository (pull requests are not included)",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        },
+        {
+          "name": "state",
+          "label": "State",
+          "type": "string",
+          "description": "open, closed or all",
+          "default": "open",
+          "example": "open"
+        },
+        {
+          "name": "labels",
+          "label": "Labels",
+          "type": "string",
+          "description": "Comma-separated label names",
+          "example": "example-labels"
+        },
+        {
+          "name": "page",
+          "label": "Page",
+          "type": "number",
+          "description": "Page number, starting at 1",
+          "default": 1,
+          "example": 1
+        },
+        {
+          "name": "limit",
+          "label": "Limit",
+          "type": "number",
+          "description": "Items per page (the server caps this, often at 50)",
+          "default": 30,
+          "example": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "issues",
+          "label": "Issues",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "owner": "example-owner",
+        "repo": "example-repo"
+      }
+    },
+    {
+      "id": "create_issue",
+      "label": "Create Issue",
+      "description": "Open a new issue",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        },
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "description": "Issue title",
+          "example": "example-title"
+        },
+        {
+          "name": "body",
+          "label": "Body",
+          "type": "text",
+          "description": "Issue text (Markdown)",
+          "default": "",
+          "example": ""
+        },
+        {
+          "name": "label_ids",
+          "label": "Label ids",
+          "type": "json",
+          "description": "List of label IDs (numbers), for example [1, 4]. Gitea needs IDs here, not names.",
+          "default": "[]",
+          "example": "[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "number",
+          "label": "Number",
+          "type": "number"
+        },
+        {
+          "name": "html_url",
+          "label": "Html url",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "label": "State",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "comment_on_issue",
+      "label": "Comment on Issue or Pull Request",
+      "description": "Add a comment to an issue or a pull request",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        },
+        {
+          "name": "index",
+          "label": "Index",
+          "type": "number",
+          "required": true,
+          "description": "Issue or pull request number",
+          "example": 1
+        },
+        {
+          "name": "body",
+          "label": "Body",
+          "type": "text",
+          "required": true,
+          "description": "Comment text (Markdown)",
+          "example": "example-body"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "label": "Id",
+          "type": "number"
+        },
+        {
+          "name": "html_url",
+          "label": "Html url",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "close_issue",
+      "label": "Close Issue",
+      "description": "Set the state of an issue to closed",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        },
+        {
+          "name": "index",
+          "label": "Index",
+          "type": "number",
+          "required": true,
+          "description": "Issue number",
+          "example": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "number",
+          "label": "Number",
+          "type": "number"
+        },
+        {
+          "name": "state",
+          "label": "State",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "list_pull_requests",
+      "label": "List Pull Requests",
+      "description": "List the pull requests of a repository",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        },
+        {
+          "name": "state",
+          "label": "State",
+          "type": "string",
+          "description": "open, closed or all",
+          "default": "open",
+          "example": "open"
+        },
+        {
+          "name": "page",
+          "label": "Page",
+          "type": "number",
+          "description": "Page number, starting at 1",
+          "default": 1,
+          "example": 1
+        },
+        {
+          "name": "limit",
+          "label": "Limit",
+          "type": "number",
+          "description": "Items per page (the server caps this, often at 50)",
+          "default": 30,
+          "example": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "pull_requests",
+          "label": "Pull requests",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "owner": "example-owner",
+        "repo": "example-repo"
+      }
+    },
+    {
+      "id": "get_pull_request",
+      "label": "Get Pull Request",
+      "description": "Read one pull request",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        },
+        {
+          "name": "index",
+          "label": "Index",
+          "type": "number",
+          "required": true,
+          "description": "Pull request number",
+          "example": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "number",
+          "label": "Number",
+          "type": "number"
+        },
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "label": "State",
+          "type": "string"
+        },
+        {
+          "name": "merged",
+          "label": "Merged",
+          "type": "boolean"
+        },
+        {
+          "name": "mergeable",
+          "label": "Mergeable",
+          "type": "boolean"
+        },
+        {
+          "name": "html_url",
+          "label": "Html url",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "owner": "example-owner",
+        "repo": "example-repo",
+        "index": 1
+      }
+    },
+    {
+      "id": "create_pull_request",
+      "label": "Create Pull Request",
+      "description": "Open a pull request from one branch into another",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        },
+        {
+          "name": "head",
+          "label": "Head",
+          "type": "string",
+          "required": true,
+          "description": "Branch with the changes. Use user:branch for a fork.",
+          "example": "example-head"
+        },
+        {
+          "name": "base",
+          "label": "Base",
+          "type": "string",
+          "required": true,
+          "description": "Branch to merge into",
+          "example": "example-base"
+        },
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "description": "Pull request title",
+          "example": "example-title"
+        },
+        {
+          "name": "body",
+          "label": "Body",
+          "type": "text",
+          "description": "Pull request text (Markdown)",
+          "default": "",
+          "example": ""
+        }
+      ],
+      "outputs": [
+        {
+          "name": "number",
+          "label": "Number",
+          "type": "number"
+        },
+        {
+          "name": "html_url",
+          "label": "Html url",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "label": "State",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "set_commit_status",
+      "label": "Set Commit Status",
+      "description": "Report the result of a check on a commit",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        },
+        {
+          "name": "sha",
+          "label": "Sha",
+          "type": "string",
+          "required": true,
+          "description": "Full commit SHA",
+          "example": "example-sha"
+        },
+        {
+          "name": "state",
+          "label": "State",
+          "type": "string",
+          "required": true,
+          "description": "pending, success, error, failure or warning",
+          "example": "example-state"
+        },
+        {
+          "name": "context",
+          "label": "Context",
+          "type": "string",
+          "description": "Name of the check",
+          "default": "default",
+          "example": "default"
+        },
+        {
+          "name": "description",
+          "label": "Description",
+          "type": "text",
+          "description": "Short text about the result",
+          "default": "",
+          "example": ""
+        },
+        {
+          "name": "target_url",
+          "label": "Target url",
+          "type": "string",
+          "description": "Link to the details of the check",
+          "default": "",
+          "example": ""
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "label": "Id",
+          "type": "number"
+        },
+        {
+          "name": "context",
+          "label": "Context",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "list_actions_runs",
+      "label": "List Actions Runs",
+      "description": "List the Gitea Actions workflow runs of a repository (needs Gitea 1.24 or later)",
+      "inputs": [
+        {
+          "name": "owner",
+          "label": "Owner",
+          "type": "string",
+          "required": true,
+          "description": "Repository owner (user or organization)",
+          "example": "example-owner"
+        },
+        {
+          "name": "repo",
+          "label": "Repo",
+          "type": "string",
+          "required": true,
+          "description": "Repository name",
+          "example": "example-repo"
+        },
+        {
+          "name": "page",
+          "label": "Page",
+          "type": "number",
+          "description": "Page number, starting at 1",
+          "default": 1,
+          "example": 1
+        },
+        {
+          "name": "limit",
+          "label": "Limit",
+          "type": "number",
+          "description": "Items per page (the server caps this, often at 50)",
+          "default": 30,
+          "example": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "workflow_runs",
+          "label": "Workflow runs",
+          "type": "array"
+        },
+        {
+          "name": "total_count",
+          "label": "Total count",
+          "type": "number"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "owner": "example-owner",
+        "repo": "example-repo"
+      }
+    }
+  ],
+  "capabilities": {
+    "http": {
+      "hosts": [
+        "your-server.invalid"
+      ]
+    },
+    "credentials": [
+      {
+        "name": "api_token",
+        "label": "Access Token",
+        "description": "A personal access token for the user that makes the calls Gitea > Settings > Applications > Generate New Token"
+      }
+    ]
+  },
+  "limits": {
+    "timeout_ms": 30000,
+    "memory_mb": 32
+  }
+}

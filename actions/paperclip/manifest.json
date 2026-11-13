@@ -1,0 +1,325 @@
+{
+  "manifest_version": 1,
+  "key": "paperclip",
+  "name": "Paperclip",
+  "version": "1.0.0",
+  "description": "Create tasks, add comments, change task status and wake agents in a Paperclip company",
+  "icon": "paperclip",
+  "color": "#6366F1",
+  "category": "productivity",
+  "summary": "Paperclip REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
+  "setup_notes": "Packaged for one Paperclip server (npm run package -- paperclip --url <server URL>). Set the secret \"api_token\" on the Access tab: An agent API key (bearer token) Create an agent key in Paperclip. Do not use a board admin key. An agent API key made for this workflow Only the rights the workflow needs. Each template needs its own right: create tasks, comment, change status, wake agents.",
+  "homepage": "https://github.com/LeForgeio/usertasks-connectors",
+  "author": "LeForge",
+  "license": "Apache-2.0",
+  "tags": [
+    "leforge",
+    "paperclip"
+  ],
+  "operations": [
+    {
+      "id": "create_issue",
+      "label": "Create Issue",
+      "description": "Create a task and assign it to an agent",
+      "inputs": [
+        {
+          "name": "company_id",
+          "label": "Company id",
+          "type": "string",
+          "required": true,
+          "description": "Company ID (same as in the connection)",
+          "example": "example-company_id"
+        },
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "description": "Task title",
+          "example": "example-title"
+        },
+        {
+          "name": "description",
+          "label": "Description",
+          "type": "text",
+          "description": "Task description (Markdown)",
+          "example": "example-description"
+        },
+        {
+          "name": "priority",
+          "label": "Priority",
+          "type": "string",
+          "description": "critical, high, medium or low",
+          "default": "medium",
+          "example": "medium"
+        },
+        {
+          "name": "assignee_agent_id",
+          "label": "Assignee agent id",
+          "type": "string",
+          "required": true,
+          "description": "ID of the agent that gets the task",
+          "example": "example-assignee_agent_id"
+        },
+        {
+          "name": "status",
+          "label": "Status",
+          "type": "string",
+          "description": "backlog, todo, in_progress, in_review, done, blocked or cancelled",
+          "default": "todo",
+          "example": "todo"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "label": "Id",
+          "type": "string"
+        },
+        {
+          "name": "identifier",
+          "label": "Identifier",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "get_issue",
+      "label": "Get Issue",
+      "description": "Read one task by its ID or identifier (for example LAV-12)",
+      "inputs": [
+        {
+          "name": "issue_id",
+          "label": "Issue id",
+          "type": "string",
+          "required": true,
+          "description": "Task ID or identifier",
+          "example": "example-issue_id"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "label": "Id",
+          "type": "string"
+        },
+        {
+          "name": "identifier",
+          "label": "Identifier",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "string"
+        },
+        {
+          "name": "assigneeAgentId",
+          "label": "Assignee Agent Id",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "issue_id": "example-issue_id"
+      }
+    },
+    {
+      "id": "add_comment",
+      "label": "Add Comment",
+      "description": "Add a comment to a task",
+      "inputs": [
+        {
+          "name": "issue_id",
+          "label": "Issue id",
+          "type": "string",
+          "required": true,
+          "description": "Task ID or identifier",
+          "example": "example-issue_id"
+        },
+        {
+          "name": "body",
+          "label": "Body",
+          "type": "text",
+          "required": true,
+          "description": "Comment text (Markdown)",
+          "example": "example-body"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "label": "Id",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "update_issue_status",
+      "label": "Update Issue Status",
+      "description": "Change the status of a task",
+      "inputs": [
+        {
+          "name": "issue_id",
+          "label": "Issue id",
+          "type": "string",
+          "required": true,
+          "description": "Task ID or identifier",
+          "example": "example-issue_id"
+        },
+        {
+          "name": "status",
+          "label": "Status",
+          "type": "string",
+          "required": true,
+          "description": "backlog, todo, in_progress, in_review, done, blocked or cancelled",
+          "example": "example-status"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "label": "Id",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "wake_agent",
+      "label": "Wake Agent",
+      "description": "Start a run for an agent now",
+      "inputs": [
+        {
+          "name": "agent_id",
+          "label": "Agent id",
+          "type": "string",
+          "required": true,
+          "description": "Agent ID",
+          "example": "example-agent_id"
+        },
+        {
+          "name": "reason",
+          "label": "Reason",
+          "type": "text",
+          "description": "Why the agent wakes up",
+          "default": "Started by a UserTasks workflow",
+          "example": "Started by a UserTasks workflow"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "label": "Id",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "http": {
+      "hosts": [
+        "your-server.invalid"
+      ]
+    },
+    "credentials": [
+      {
+        "name": "api_token",
+        "label": "API Key",
+        "description": "An agent API key (bearer token) Create an agent key in Paperclip. Do not use a board admin key."
+      }
+    ]
+  },
+  "limits": {
+    "timeout_ms": 30000,
+    "memory_mb": 32
+  }
+}

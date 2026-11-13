@@ -1,0 +1,152 @@
+{
+  "key": "leforge",
+  "name": "LeForge",
+  "version": "1.0.0",
+  "description": "Run LeForge actions and publish Fabric events from a workflow",
+  "icon": "hammer",
+  "color": "#7C3AED",
+  "category": "productivity",
+  "docs_url": "https://github.com/LeForgeio/leforge",
+  "default_url": null,
+  "url_example": "https://leforge.example.com",
+  "setup": {
+    "title": "Recommended LeForge Setup",
+    "items": [
+      "An API key made for this workflow engine only",
+      "Scope actions:read to list actions. The connection test also needs it.",
+      "The scope of each action the workflow runs",
+      "Scope fabric:publish to publish Fabric events"
+    ],
+    "note": "A key gets its rights from the user who made it. Use a key from a user with the lowest role that works."
+  },
+  "auth": {
+    "style": "bearer",
+    "config": {
+      "token": "<token>"
+    },
+    "optional": false,
+    "label": "API Key",
+    "hint": "A LeForge API key. It starts with fhk_. Create it in LeForge under Settings, API keys"
+  },
+  "operations": [
+    {
+      "id": "health",
+      "label": "Health",
+      "description": "Check that the LeForge server is up",
+      "method": "GET",
+      "path": "/health",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "status",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "list_actions",
+      "label": "List Actions",
+      "description": "List the actions that this key may run",
+      "method": "GET",
+      "path": "/api/v1/actions",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "actions",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "run_action",
+      "label": "Run Action",
+      "description": "Run one action by its id",
+      "method": "POST",
+      "path": "/api/v1/actions/{{action_id}}",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "dryRun",
+          "input": "dryRun"
+        }
+      ],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{{input}}",
+      "inputs": [
+        {
+          "name": "action_id",
+          "type": "string",
+          "required": true,
+          "description": "Action id, from List Actions"
+        },
+        {
+          "name": "input",
+          "type": "json",
+          "required": false,
+          "description": "The input object of the action",
+          "default": "{}"
+        },
+        {
+          "name": "dryRun",
+          "type": "string",
+          "required": false,
+          "description": "true to check the action without a change (only if the action supports it)"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "ok",
+          "type": "boolean"
+        },
+        {
+          "name": "result",
+          "type": "json"
+        }
+      ]
+    },
+    {
+      "id": "publish_event",
+      "label": "Publish Fabric Event",
+      "description": "Publish one event to the LeForge event Fabric",
+      "method": "POST",
+      "path": "/api/v1/fabric/events",
+      "query_fixed": {},
+      "query": [],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": "{\"event\": {\"type\": \"{{type}}\", \"payload\": {{payload}}}}",
+      "inputs": [
+        {
+          "name": "type",
+          "type": "string",
+          "required": true,
+          "description": "Event type, for example app.myapp.job.done"
+        },
+        {
+          "name": "payload",
+          "type": "json",
+          "required": false,
+          "description": "The event payload",
+          "default": "{}"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "accepted",
+          "type": "array"
+        }
+      ]
+    }
+  ]
+}

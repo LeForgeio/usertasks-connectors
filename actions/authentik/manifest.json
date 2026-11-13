@@ -1,0 +1,458 @@
+{
+  "manifest_version": 1,
+  "key": "authentik",
+  "name": "Authentik",
+  "version": "1.0.0",
+  "description": "Manage users, groups and application access in an Authentik identity provider",
+  "icon": "key-round",
+  "color": "#FD4B2D",
+  "category": "productivity",
+  "summary": "Authentik REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
+  "setup_notes": "Packaged for one Authentik server (npm run package -- authentik --url <server URL>). Set the secret \"api_token\" on the Access tab: Sent as a bearer token Create it in the admin interface: Directory > Tokens and App passwords A service account user for this connector An API token for that user (Directory > Tokens and App passwords, intent \"API Token\") A role that can view and change users and groups, and nothing more",
+  "homepage": "https://github.com/LeForgeio/usertasks-connectors",
+  "author": "LeForge",
+  "license": "Apache-2.0",
+  "tags": [
+    "leforge",
+    "authentik"
+  ],
+  "operations": [
+    {
+      "id": "get_current_user",
+      "label": "Get Current User",
+      "description": "Return the user that owns the API token",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "user",
+          "label": "User",
+          "type": "json"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    },
+    {
+      "id": "search_users",
+      "label": "Search Users",
+      "description": "Find users by name, user name or email",
+      "inputs": [
+        {
+          "name": "search",
+          "label": "Search",
+          "type": "string",
+          "description": "Text to look for",
+          "example": "example-search"
+        },
+        {
+          "name": "page_size",
+          "label": "Page size",
+          "type": "number",
+          "description": "Users per page",
+          "default": 20,
+          "example": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "results",
+          "label": "Results",
+          "type": "array"
+        },
+        {
+          "name": "pagination",
+          "label": "Pagination",
+          "type": "json"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    },
+    {
+      "id": "get_user",
+      "label": "Get User",
+      "description": "Get one user by its numeric id (pk)",
+      "inputs": [
+        {
+          "name": "user_pk",
+          "label": "User pk",
+          "type": "number",
+          "required": true,
+          "description": "User id (pk)",
+          "example": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "pk",
+          "label": "Pk",
+          "type": "number"
+        },
+        {
+          "name": "username",
+          "label": "Username",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "label": "Name",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "label": "Email",
+          "type": "string"
+        },
+        {
+          "name": "is_active",
+          "label": "Is active",
+          "type": "boolean"
+        },
+        {
+          "name": "groups_obj",
+          "label": "Groups obj",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "user_pk": 1
+      }
+    },
+    {
+      "id": "create_user",
+      "label": "Create User",
+      "description": "Create a user. The user has no password until someone sets one in Authentik.",
+      "inputs": [
+        {
+          "name": "username",
+          "label": "Username",
+          "type": "string",
+          "required": true,
+          "description": "Unique user name",
+          "example": "example-username"
+        },
+        {
+          "name": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "description": "Display name",
+          "example": "example-name"
+        },
+        {
+          "name": "email",
+          "label": "Email",
+          "type": "string",
+          "required": true,
+          "description": "Email address",
+          "example": "example-email"
+        },
+        {
+          "name": "is_active",
+          "label": "Is active",
+          "type": "boolean",
+          "description": "true if the user can sign in",
+          "default": true,
+          "example": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "pk",
+          "label": "Pk",
+          "type": "number"
+        },
+        {
+          "name": "username",
+          "label": "Username",
+          "type": "string"
+        },
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "add_user_to_group",
+      "label": "Add User to Group",
+      "description": "Add a user to a group",
+      "inputs": [
+        {
+          "name": "group_uuid",
+          "label": "Group uuid",
+          "type": "string",
+          "required": true,
+          "description": "Group UUID (from List Groups)",
+          "example": "example-group_uuid"
+        },
+        {
+          "name": "user_pk",
+          "label": "User pk",
+          "type": "number",
+          "required": true,
+          "description": "User id (pk)",
+          "example": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "remove_user_from_group",
+      "label": "Remove User from Group",
+      "description": "Remove a user from a group",
+      "inputs": [
+        {
+          "name": "group_uuid",
+          "label": "Group uuid",
+          "type": "string",
+          "required": true,
+          "description": "Group UUID (from List Groups)",
+          "example": "example-group_uuid"
+        },
+        {
+          "name": "user_pk",
+          "label": "User pk",
+          "type": "number",
+          "required": true,
+          "description": "User id (pk)",
+          "example": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "list_groups",
+      "label": "List Groups",
+      "description": "List groups",
+      "inputs": [
+        {
+          "name": "search",
+          "label": "Search",
+          "type": "string",
+          "description": "Text to look for",
+          "example": "example-search"
+        },
+        {
+          "name": "page_size",
+          "label": "Page size",
+          "type": "number",
+          "description": "Groups per page",
+          "default": 20,
+          "example": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "results",
+          "label": "Results",
+          "type": "array"
+        },
+        {
+          "name": "pagination",
+          "label": "Pagination",
+          "type": "json"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    },
+    {
+      "id": "list_applications",
+      "label": "List Applications",
+      "description": "List applications",
+      "inputs": [
+        {
+          "name": "search",
+          "label": "Search",
+          "type": "string",
+          "description": "Text to look for",
+          "example": "example-search"
+        },
+        {
+          "name": "page_size",
+          "label": "Page size",
+          "type": "number",
+          "description": "Applications per page",
+          "default": 20,
+          "example": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "results",
+          "label": "Results",
+          "type": "array"
+        },
+        {
+          "name": "pagination",
+          "label": "Pagination",
+          "type": "json"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    }
+  ],
+  "capabilities": {
+    "http": {
+      "hosts": [
+        "your-server.invalid"
+      ]
+    },
+    "credentials": [
+      {
+        "name": "api_token",
+        "label": "API Token",
+        "description": "Sent as a bearer token Create it in the admin interface: Directory > Tokens and App passwords"
+      }
+    ]
+  },
+  "limits": {
+    "timeout_ms": 30000,
+    "memory_mb": 32
+  }
+}

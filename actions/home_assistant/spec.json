@@ -1,0 +1,203 @@
+{
+  "key": "home_assistant",
+  "name": "Home Assistant",
+  "version": "1.0.0",
+  "description": "Read entity states, call services, fire events and send phone notifications through Home Assistant",
+  "icon": "server-cog",
+  "color": "#18bcf2",
+  "category": "productivity",
+  "docs_url": "https://developers.home-assistant.io/docs/api/rest/",
+  "default_url": null,
+  "url_example": "https://ha.example.com",
+  "setup": {
+    "title": "Recommended Home Assistant Setup",
+    "items": [
+      "A long-lived access token from a dedicated user",
+      "A user that can control only the entities the workflows need"
+    ],
+    "note": "A long-lived access token has the full rights of its user. Create it in your profile page, under Security."
+  },
+  "auth": {
+    "style": "bearer",
+    "config": {
+      "token": "<token>"
+    },
+    "optional": false,
+    "label": "Long-Lived Access Token",
+    "hint": "Profile page > Security > Long-lived access tokens > Create token"
+  },
+  "operations": [
+    {
+      "id": "api_status",
+      "label": "API Status",
+      "description": "Check that the Home Assistant API is running",
+      "method": "GET",
+      "path": "/api/",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "get_state",
+      "label": "Get State",
+      "description": "Get the state and attributes of one entity",
+      "method": "GET",
+      "path": "/api/states/{{entity_id}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "entity_id",
+          "type": "string",
+          "required": true,
+          "description": "Entity id, for example light.kitchen"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "entity_id",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "type": "string"
+        },
+        {
+          "name": "attributes",
+          "type": "json"
+        },
+        {
+          "name": "last_changed",
+          "type": "string"
+        },
+        {
+          "name": "last_updated",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "list_states",
+      "label": "List States",
+      "description": "List the state of every entity",
+      "method": "GET",
+      "path": "/api/states",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "states",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "call_service",
+      "label": "Call Service",
+      "description": "Call a service. For a phone push, use domain notify and service mobile_app_<device>.",
+      "method": "POST",
+      "path": "/api/services/{{domain}}/{{service}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": "{{data}}",
+      "inputs": [
+        {
+          "name": "domain",
+          "type": "string",
+          "required": true,
+          "description": "Service domain, for example light or notify"
+        },
+        {
+          "name": "service",
+          "type": "string",
+          "required": true,
+          "description": "Service name, for example turn_on or mobile_app_<device>"
+        },
+        {
+          "name": "data",
+          "type": "json",
+          "required": false,
+          "description": "Service data, for example {\"title\": \"Door\", \"message\": \"Front door open\"}",
+          "default": "{}"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "changed_states",
+          "type": "array"
+        }
+      ]
+    },
+    {
+      "id": "fire_event",
+      "label": "Fire Event",
+      "description": "Fire an event on the Home Assistant event bus",
+      "method": "POST",
+      "path": "/api/events/{{event_type}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": "{{event_data}}",
+      "inputs": [
+        {
+          "name": "event_type",
+          "type": "string",
+          "required": true,
+          "description": "Event type"
+        },
+        {
+          "name": "event_data",
+          "type": "json",
+          "required": false,
+          "description": "Event data",
+          "default": "{}"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "render_template",
+      "label": "Render Template",
+      "description": "Render a Home Assistant Jinja template and return the text",
+      "method": "POST",
+      "path": "/api/template",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": "{\"template\": \"{{template}}\"}",
+      "inputs": [
+        {
+          "name": "template",
+          "type": "text",
+          "required": true,
+          "description": "Jinja template, for example a states() call on a sensor"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "result",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

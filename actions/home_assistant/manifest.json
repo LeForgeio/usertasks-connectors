@@ -1,0 +1,310 @@
+{
+  "manifest_version": 1,
+  "key": "home_assistant",
+  "name": "Home Assistant",
+  "version": "1.0.0",
+  "description": "Read entity states, call services, fire events and send phone notifications through Home Assistant",
+  "icon": "server-cog",
+  "color": "#18bcf2",
+  "category": "productivity",
+  "summary": "Home Assistant REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
+  "setup_notes": "Packaged for one Home Assistant server (npm run package -- home_assistant --url <server URL>). Set the secret \"api_token\" on the Access tab: Profile page > Security > Long-lived access tokens > Create token A long-lived access token from a dedicated user A user that can control only the entities the workflows need",
+  "homepage": "https://github.com/LeForgeio/usertasks-connectors",
+  "author": "LeForge",
+  "license": "Apache-2.0",
+  "tags": [
+    "leforge",
+    "home_assistant"
+  ],
+  "operations": [
+    {
+      "id": "api_status",
+      "label": "API Status",
+      "description": "Check that the Home Assistant API is running",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "message",
+          "label": "Message",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    },
+    {
+      "id": "get_state",
+      "label": "Get State",
+      "description": "Get the state and attributes of one entity",
+      "inputs": [
+        {
+          "name": "entity_id",
+          "label": "Entity id",
+          "type": "string",
+          "required": true,
+          "description": "Entity id, for example light.kitchen",
+          "example": "example-entity_id"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "entity_id",
+          "label": "Entity id",
+          "type": "string"
+        },
+        {
+          "name": "state",
+          "label": "State",
+          "type": "string"
+        },
+        {
+          "name": "attributes",
+          "label": "Attributes",
+          "type": "json"
+        },
+        {
+          "name": "last_changed",
+          "label": "Last changed",
+          "type": "string"
+        },
+        {
+          "name": "last_updated",
+          "label": "Last updated",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "entity_id": "example-entity_id"
+      }
+    },
+    {
+      "id": "list_states",
+      "label": "List States",
+      "description": "List the state of every entity",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "states",
+          "label": "States",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    },
+    {
+      "id": "call_service",
+      "label": "Call Service",
+      "description": "Call a service. For a phone push, use domain notify and service mobile_app_<device>.",
+      "inputs": [
+        {
+          "name": "domain",
+          "label": "Domain",
+          "type": "string",
+          "required": true,
+          "description": "Service domain, for example light or notify",
+          "example": "example-domain"
+        },
+        {
+          "name": "service",
+          "label": "Service",
+          "type": "string",
+          "required": true,
+          "description": "Service name, for example turn_on or mobile_app_<device>",
+          "example": "example-service"
+        },
+        {
+          "name": "data",
+          "label": "Data",
+          "type": "json",
+          "description": "Service data, for example {\"title\": \"Door\", \"message\": \"Front door open\"}",
+          "default": "{}",
+          "example": "{}"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "changed_states",
+          "label": "Changed states",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "fire_event",
+      "label": "Fire Event",
+      "description": "Fire an event on the Home Assistant event bus",
+      "inputs": [
+        {
+          "name": "event_type",
+          "label": "Event type",
+          "type": "string",
+          "required": true,
+          "description": "Event type",
+          "example": "example-event_type"
+        },
+        {
+          "name": "event_data",
+          "label": "Event data",
+          "type": "json",
+          "description": "Event data",
+          "default": "{}",
+          "example": "{}"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "message",
+          "label": "Message",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "render_template",
+      "label": "Render Template",
+      "description": "Render a Home Assistant Jinja template and return the text",
+      "inputs": [
+        {
+          "name": "template",
+          "label": "Template",
+          "type": "text",
+          "required": true,
+          "description": "Jinja template, for example a states() call on a sensor",
+          "example": "example-template"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "result",
+          "label": "Result",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "http": {
+      "hosts": [
+        "your-server.invalid"
+      ]
+    },
+    "credentials": [
+      {
+        "name": "api_token",
+        "label": "Long-Lived Access Token",
+        "description": "Profile page > Security > Long-lived access tokens > Create token"
+      }
+    ]
+  },
+  "limits": {
+    "timeout_ms": 30000,
+    "memory_mb": 32
+  }
+}

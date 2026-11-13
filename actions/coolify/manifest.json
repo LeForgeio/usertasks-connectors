@@ -1,0 +1,470 @@
+{
+  "manifest_version": 1,
+  "key": "coolify",
+  "name": "Coolify",
+  "version": "1.0.0",
+  "description": "List, deploy and restart applications and manage their environment variables on a Coolify server",
+  "icon": "rocket",
+  "color": "#6B16ED",
+  "category": "cloud",
+  "summary": "Coolify REST calls from a workflow. Built from the LeForge usertasks-connectors repository.",
+  "setup_notes": "Packaged for one Coolify server (npm run package -- coolify --url <server URL>). Set the secret \"api_token\" on the Access tab: A Coolify API token Create it in Coolify under Keys & Tokens, API tokens Enable the API in Coolify: Settings, Configuration, Advanced, API Access Create an API token: Keys & Tokens, API tokens Give the token only the permissions it needs (read, write, deploy)",
+  "homepage": "https://github.com/LeForgeio/usertasks-connectors",
+  "author": "LeForge",
+  "license": "Apache-2.0",
+  "tags": [
+    "leforge",
+    "coolify"
+  ],
+  "operations": [
+    {
+      "id": "list_applications",
+      "label": "List Applications",
+      "description": "List all applications",
+      "inputs": [
+        {
+          "name": "tag",
+          "label": "Tag",
+          "type": "string",
+          "description": "Only show applications with this tag",
+          "example": "example-tag"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "applications",
+          "label": "Applications",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {}
+    },
+    {
+      "id": "get_application",
+      "label": "Get Application",
+      "description": "Get one application by UUID",
+      "inputs": [
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID",
+          "example": "example-uuid"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "label": "Name",
+          "type": "string"
+        },
+        {
+          "name": "fqdn",
+          "label": "Fqdn",
+          "type": "string"
+        },
+        {
+          "name": "git_repository",
+          "label": "Git repository",
+          "type": "string"
+        },
+        {
+          "name": "git_branch",
+          "label": "Git branch",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "uuid": "example-uuid"
+      }
+    },
+    {
+      "id": "deploy",
+      "label": "Deploy Application",
+      "description": "Start a deployment of an application",
+      "inputs": [
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID",
+          "example": "example-uuid"
+        },
+        {
+          "name": "force",
+          "label": "Force",
+          "type": "string",
+          "description": "true to rebuild without cache",
+          "default": "false",
+          "example": "false"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "deployments",
+          "label": "Deployments",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "restart_application",
+      "label": "Restart Application",
+      "description": "Restart an application without a new build",
+      "inputs": [
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID",
+          "example": "example-uuid"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "message",
+          "label": "Message",
+          "type": "string"
+        },
+        {
+          "name": "deployment_uuid",
+          "label": "Deployment uuid",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "list_deployments",
+      "label": "List Deployments of an Application",
+      "description": "List the deployments of one application, newest first",
+      "inputs": [
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID",
+          "example": "example-uuid"
+        },
+        {
+          "name": "skip",
+          "label": "Skip",
+          "type": "number",
+          "description": "Number of deployments to skip",
+          "default": 0,
+          "example": 0
+        },
+        {
+          "name": "take",
+          "label": "Take",
+          "type": "number",
+          "description": "Number of deployments to return",
+          "default": 10,
+          "example": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "count",
+          "label": "Count",
+          "type": "number"
+        },
+        {
+          "name": "deployments",
+          "label": "Deployments",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "uuid": "example-uuid"
+      }
+    },
+    {
+      "id": "list_envs",
+      "label": "List Environment Variables",
+      "description": "List the environment variables of an application",
+      "inputs": [
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID",
+          "example": "example-uuid"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "envs",
+          "label": "Envs",
+          "type": "array"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ],
+      "sample": {
+        "uuid": "example-uuid"
+      }
+    },
+    {
+      "id": "create_env",
+      "label": "Create Environment Variable",
+      "description": "Add a new environment variable to an application",
+      "inputs": [
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID",
+          "example": "example-uuid"
+        },
+        {
+          "name": "key",
+          "label": "Key",
+          "type": "string",
+          "required": true,
+          "description": "Variable name",
+          "example": "example-key"
+        },
+        {
+          "name": "value",
+          "label": "Value",
+          "type": "string",
+          "required": true,
+          "description": "Variable value",
+          "example": "example-value"
+        },
+        {
+          "name": "is_preview",
+          "label": "Is preview",
+          "type": "string",
+          "description": "true to set it for preview deployments, false for production",
+          "default": "false",
+          "example": "false"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    },
+    {
+      "id": "update_env",
+      "label": "Update Environment Variable",
+      "description": "Change the value of an existing environment variable",
+      "inputs": [
+        {
+          "name": "uuid",
+          "label": "Uuid",
+          "type": "string",
+          "required": true,
+          "description": "Application UUID",
+          "example": "example-uuid"
+        },
+        {
+          "name": "key",
+          "label": "Key",
+          "type": "string",
+          "required": true,
+          "description": "Variable name",
+          "example": "example-key"
+        },
+        {
+          "name": "value",
+          "label": "Value",
+          "type": "string",
+          "required": true,
+          "description": "Variable value",
+          "example": "example-value"
+        },
+        {
+          "name": "is_preview",
+          "label": "Is preview",
+          "type": "string",
+          "description": "true to set it for preview deployments, false for production",
+          "default": "false",
+          "example": "false"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "message",
+          "label": "Message",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "label": "HTTP status",
+          "type": "integer",
+          "description": "The HTTP status code of the response"
+        },
+        {
+          "name": "ok",
+          "label": "OK",
+          "type": "boolean",
+          "description": "True when the status is 2xx"
+        },
+        {
+          "name": "response",
+          "label": "Response",
+          "type": "json",
+          "description": "The full response body"
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "http": {
+      "hosts": [
+        "your-server.invalid"
+      ]
+    },
+    "credentials": [
+      {
+        "name": "api_token",
+        "label": "API Token",
+        "description": "A Coolify API token Create it in Coolify under Keys & Tokens, API tokens"
+      }
+    ]
+  },
+  "limits": {
+    "timeout_ms": 30000,
+    "memory_mb": 32
+  }
+}

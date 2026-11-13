@@ -1,0 +1,146 @@
+{
+  "key": "ntfy",
+  "name": "ntfy",
+  "version": "1.0.0",
+  "description": "Send push notifications to phones and desktops through an ntfy server",
+  "icon": "inbox",
+  "color": "#338574",
+  "category": "communication",
+  "docs_url": "https://docs.ntfy.sh/publish/",
+  "default_url": "https://ntfy.sh",
+  "url_example": "https://ntfy.example.com",
+  "setup": {
+    "title": "Recommended ntfy Setup",
+    "items": [
+      "A topic for each alert stream",
+      "An access token with write access to those topics (ntfy token add)"
+    ],
+    "note": "A public server such as ntfy.sh needs no token, but anyone who knows the topic name can read it."
+  },
+  "auth": {
+    "style": "bearer",
+    "config": {
+      "token": "<token>"
+    },
+    "optional": true,
+    "label": "Access Token",
+    "hint": "Optional. Leave empty for a server that allows anonymous publish. Create it on the server with: ntfy token add <user>"
+  },
+  "operations": [
+    {
+      "id": "send_message",
+      "label": "Send Message",
+      "description": "Publish a notification to a topic",
+      "method": "POST",
+      "path": "/{{topic}}",
+      "query_fixed": {},
+      "query": [
+        {
+          "param": "title",
+          "input": "title"
+        },
+        {
+          "param": "priority",
+          "input": "priority"
+        },
+        {
+          "param": "tags",
+          "input": "tags"
+        },
+        {
+          "param": "click",
+          "input": "click"
+        },
+        {
+          "param": "markdown",
+          "input": "markdown"
+        }
+      ],
+      "headers": {
+        "Content-Type": "text/plain; charset=utf-8"
+      },
+      "body": "{{message}}",
+      "inputs": [
+        {
+          "name": "topic",
+          "type": "string",
+          "required": true,
+          "description": "Topic name"
+        },
+        {
+          "name": "message",
+          "type": "text",
+          "required": true,
+          "description": "Message text"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": false,
+          "description": "Title shown above the message"
+        },
+        {
+          "name": "priority",
+          "type": "string",
+          "required": false,
+          "description": "1 (min) to 5 (max), or min, low, default, high, urgent",
+          "default": "3"
+        },
+        {
+          "name": "tags",
+          "type": "string",
+          "required": false,
+          "description": "Comma-separated tags; emoji short codes such as warning or white_check_mark show as emoji"
+        },
+        {
+          "name": "click",
+          "type": "string",
+          "required": false,
+          "description": "URL to open when the notification is tapped"
+        },
+        {
+          "name": "markdown",
+          "type": "string",
+          "required": false,
+          "description": "yes to render the message as Markdown"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "time",
+          "type": "number"
+        },
+        {
+          "name": "topic",
+          "type": "string"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "server_health",
+      "label": "Server Health",
+      "description": "Check that the ntfy server is up",
+      "method": "GET",
+      "path": "/v1/health",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "healthy",
+          "type": "boolean"
+        }
+      ]
+    }
+  ]
+}

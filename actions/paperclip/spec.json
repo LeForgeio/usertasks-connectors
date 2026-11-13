@@ -1,0 +1,239 @@
+{
+  "key": "paperclip",
+  "name": "Paperclip",
+  "version": "1.0.0",
+  "description": "Create tasks, add comments, change task status and wake agents in a Paperclip company",
+  "icon": "paperclip",
+  "color": "#6366F1",
+  "category": "productivity",
+  "docs_url": "https://github.com/paperclipai/paperclip",
+  "default_url": null,
+  "url_example": "https://paperclip.example.com",
+  "setup": {
+    "title": "Recommended Paperclip Setup",
+    "items": [
+      "An agent API key made for this workflow",
+      "Only the rights the workflow needs. Each template needs its own right: create tasks, comment, change status, wake agents."
+    ],
+    "note": "Do not use a board admin key. The key can act in the company it belongs to."
+  },
+  "auth": {
+    "style": "bearer",
+    "config": {
+      "token": "<token>"
+    },
+    "optional": false,
+    "label": "API Key",
+    "hint": "An agent API key (bearer token) Create an agent key in Paperclip. Do not use a board admin key."
+  },
+  "operations": [
+    {
+      "id": "create_issue",
+      "label": "Create Issue",
+      "description": "Create a task and assign it to an agent",
+      "method": "POST",
+      "path": "/api/companies/{{company_id}}/issues",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": "{\"title\": \"{{title}}\", \"description\": \"{{description}}\", \"priority\": \"{{priority}}\", \"assigneeAgentId\": \"{{assignee_agent_id}}\", \"status\": \"{{status}}\"}",
+      "inputs": [
+        {
+          "name": "company_id",
+          "type": "string",
+          "required": true,
+          "description": "Company ID (same as in the connection)"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "description": "Task title"
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "description": "Task description (Markdown)"
+        },
+        {
+          "name": "priority",
+          "type": "string",
+          "required": false,
+          "description": "critical, high, medium or low",
+          "default": "medium"
+        },
+        {
+          "name": "assignee_agent_id",
+          "type": "string",
+          "required": true,
+          "description": "ID of the agent that gets the task"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "required": false,
+          "description": "backlog, todo, in_progress, in_review, done, blocked or cancelled",
+          "default": "todo"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "identifier",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "get_issue",
+      "label": "Get Issue",
+      "description": "Read one task by its ID or identifier (for example LAV-12)",
+      "method": "GET",
+      "path": "/api/issues/{{issue_id}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": null,
+      "inputs": [
+        {
+          "name": "issue_id",
+          "type": "string",
+          "required": true,
+          "description": "Task ID or identifier"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "identifier",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "name": "assigneeAgentId",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "add_comment",
+      "label": "Add Comment",
+      "description": "Add a comment to a task",
+      "method": "POST",
+      "path": "/api/issues/{{issue_id}}/comments",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": "{\"body\": \"{{body}}\"}",
+      "inputs": [
+        {
+          "name": "issue_id",
+          "type": "string",
+          "required": true,
+          "description": "Task ID or identifier"
+        },
+        {
+          "name": "body",
+          "type": "text",
+          "required": true,
+          "description": "Comment text (Markdown)"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "update_issue_status",
+      "label": "Update Issue Status",
+      "description": "Change the status of a task",
+      "method": "PATCH",
+      "path": "/api/issues/{{issue_id}}",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": "{\"status\": \"{{status}}\"}",
+      "inputs": [
+        {
+          "name": "issue_id",
+          "type": "string",
+          "required": true,
+          "description": "Task ID or identifier"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "required": true,
+          "description": "backlog, todo, in_progress, in_review, done, blocked or cancelled"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "id": "wake_agent",
+      "label": "Wake Agent",
+      "description": "Start a run for an agent now",
+      "method": "POST",
+      "path": "/api/agents/{{agent_id}}/wakeup",
+      "query_fixed": {},
+      "query": [],
+      "headers": {},
+      "body": "{\"source\": \"automation\", \"reason\": \"{{reason}}\"}",
+      "inputs": [
+        {
+          "name": "agent_id",
+          "type": "string",
+          "required": true,
+          "description": "Agent ID"
+        },
+        {
+          "name": "reason",
+          "type": "text",
+          "required": false,
+          "description": "Why the agent wakes up",
+          "default": "Started by a UserTasks workflow"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
